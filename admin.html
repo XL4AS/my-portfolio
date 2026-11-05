@@ -1,1 +1,56 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Input Proyek</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Panel Admin Portofolio</h1>
+
+  <section style="margin-bottom: 20px;">
+    <h3>Konfigurasi Akun GitHub</h3>
+    <input type="text" id="gh-username" placeholder="Username GitHub (cth: XL4AS)">
+    <input type="password" id="gh-token" placeholder="GitHub Personal Access Token (PAT)">
+  </section>
+
+  <hr>
+
+  <section>
+    <h3>Tambah Proyek Baru</h3>
+    <form id="add-project-form">
+      <div>
+        <label>Judul Proyek:</label><br>
+        <input type="text" id="judul" required>
+      </div>
+      <div>
+        <label>Kategori:</label><br>
+        <select id="kategori">
+          <option value="web">Web</option>
+          <option value="3d">3D Modeling</option>
+          <option value="design">Desain Grafis</option>
+        </select>
+      </div>
+      <div>
+        <label>Deskripsi:</label><br>
+        <textarea id="deskripsi" required></textarea>
+      </div>
+      <div>
+        <label>Link Proyek (Opsional):</label><br>
+        <input type="url" id="link">
+      </div>
+      <div>
+        <label>Upload File / Gambar (Opsional):</label><br>
+        <input type="file" id="file-input">
+      </div>
+      <br>
+      <button type="submit" id="btn-submit">Simpan ke Repository</button>
+    </form>
+  </section>
+
+  <p id="status-msg"></p>
+
+  <script src="admin.js"></script>
+</body>
+</html>
