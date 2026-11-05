@@ -1,754 +1,155 @@
 <!DOCTYPE html>
-<html lang="id" class="scroll-smooth">
+<html lang="id" class="scroll-smooth dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iklas Anang Subekti - Full-Stack Developer Portfolio</title>
+    <title>Portofolio | Git-as-a-Database CMS</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter & JetBrains Mono -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
                     colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            400: '#818cf8',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            accent: '#06b6d4',
-                            purple: '#a855f7',
-                            dark: '#0b0f19',
-                            card: '#111827',
-                            border: '#1f2937'
-                        }
-                    },
-                    animation: {
-                        'pulse-glow': 'pulseGlow 3s infinite alternate',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        pulseGlow: {
-                            '0%': { boxShadow: '0 0 15px rgba(99, 102, 241, 0.2)' },
-                            '100%': { boxShadow: '0 0 35px rgba(6, 182, 212, 0.5)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
+                        darkbg: '#0B0F19',
+                        cardbg: '#1E293B',
                     }
                 }
             }
         }
     </script>
-    
-    <style>
-        body {
-            background-color: #0b0f19;
-            color: #f3f4f6;
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.08) 0%, transparent 40%);
-        }
-        
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        
-        .glass-card {
-            background: rgba(31, 41, 55, 0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .glass-card:hover {
-            border-color: rgba(99, 102, 241, 0.4);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.2);
-        }
-
-        .gradient-text {
-            background: linear-gradient(135deg, #818cf8 0%, #06b6d4 50%, #a855f7 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0b0f19;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f2937;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #4f46e5;
-        }
-    </style>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="font-sans antialiased text-gray-200 min-h-screen flex flex-col justify-between selection:bg-brand-500 selection:text-white">
+<body class="bg-darkbg text-gray-100 font-sans antialiased selection:bg-indigo-500 selection:text-white">
 
-    <!-- NAVIGATION BAR -->
-    <header class="fixed top-0 left-0 w-full z-50 glass-panel border-b border-gray-800/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo / Name -->
-                <a href="#" class="flex items-center gap-2 group">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-brand-accent flex items-center justify-center font-bold font-mono text-white text-lg shadow-lg shadow-brand-500/30 group-hover:scale-105 transition-transform">
-                        IA
-                    </div>
-                    <span class="font-bold text-lg tracking-tight font-mono text-white">SUBEKTI<span class="text-brand-accent">.dev</span></span>
-                </a>
-
-                <!-- Desktop Navigation Menu -->
-                <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
-                    <a href="#about" class="text-gray-300 hover:text-brand-accent transition-colors">Tentang Saya</a>
-                    <a href="#projects" class="text-gray-300 hover:text-brand-accent transition-colors">Proyek</a>
-                    <a href="#git-admin" class="text-gray-300 hover:text-brand-accent transition-colors flex items-center gap-1.5">
-                        <i class="fa-brands fa-git-alt text-orange-400"></i> Git CMS
-                    </a>
-                    <a href="#contact" class="text-gray-300 hover:text-brand-accent transition-colors">Kontak</a>
-                </nav>
-
-                <!-- Actions -->
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleAdminModal()" class="px-3.5 py-1.5 rounded-lg text-xs font-mono font-medium border border-brand-500/30 bg-brand-500/10 text-brand-400 hover:bg-brand-500 hover:text-white transition-all duration-200 flex items-center gap-2">
-                        <i class="fa-solid fa-lock-open text-[10px]"></i>
-                        <span>CMS Admin</span>
-                    </button>
-                    <!-- Mobile Menu Toggle Button -->
-                    <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white focus:outline-none">
-                        <i class="fa-solid fa-bars text-xl"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile Navigation Menu -->
-        <div id="mobileMenu" class="hidden md:hidden glass-panel border-b border-gray-800 px-4 pt-2 pb-4 space-y-3">
-            <a href="#about" class="block text-gray-300 hover:text-brand-accent py-1">Tentang Saya</a>
-            <a href="#projects" class="block text-gray-300 hover:text-brand-accent py-1">Proyek</a>
-            <a href="#git-admin" class="block text-gray-300 hover:text-brand-accent py-1">Git CMS Workflow</a>
-            <a href="#contact" class="block text-gray-300 hover:text-brand-accent py-1">Kontak</a>
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-darkbg/80 backdrop-blur-md border-b border-gray-800">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="font-bold text-xl tracking-wider text-indigo-400">PORT<span class="text-white">FOLIO</span></a>
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                <a href="#about" class="hover:text-indigo-400 transition">Tentang</a>
+                <a href="#projects" class="hover:text-indigo-400 transition">Proyek</a>
+                <a href="#admin-info" class="hover:text-indigo-400 transition">Git CMS</a>
+                <a href="#contact" class="hover:text-indigo-400 transition">Kontak</a>
+            </nav>
+            <a href="/admin/" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg shadow-indigo-500/20">
+                <i class="fa-solid fa-lock mr-2"></i>Admin Login
+            </a>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="pt-24 pb-16 flex-grow">
-        
-        <!-- HERO SECTION -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative overflow-hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                
-                <!-- Left Text Content -->
-                <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                    <!-- Status Badge -->
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-card border border-brand-500/30 text-xs text-brand-400 font-mono">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 -ml-4"></span>
-                        <span>Available for Hire & Collaboration</span>
-                    </div>
-
-                    <!-- Main Heading -->
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-                        Halo, Saya <br class="hidden sm:inline"/>
-                        <span class="gradient-text">Iklas Anang Subekti</span>
-                    </h1>
-
-                    <!-- Subtitle / Role -->
-                    <p class="text-lg sm:text-xl text-gray-400 font-medium font-mono">
-                        &lt;<span class="text-brand-accent">Full-Stack Developer</span> &amp; <span class="text-brand-purple">Tech Enthusiast</span> /&gt;
-                    </p>
-
-                    <!-- Short Bio -->
-                    <p class="text-gray-400 text-base leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                        Berpengalaman dalam merancang dan mengembangkan sistem web modern yang skalabel (Laravel, MySQL, Astro), pengolahan data (*Data Science*), serta arsitektur solusi berbasis IoT. Berdedikasi menghadirkan kode yang bersih, performa tinggi, dan pengalaman pengguna yang luar biasa.
-                    </p>
-
-                    <!-- CTA Buttons & Social Links -->
-                    <div class="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
-                        <a href="#projects" class="px-6 py-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-accent font-medium text-white shadow-lg shadow-brand-500/25 hover:shadow-brand-500/40 hover:scale-[1.02] transition-all flex items-center gap-2">
-                            <span>Lihat Proyek Saya</span>
-                            <i class="fa-solid fa-arrow-down-long text-xs"></i>
-                        </a>
-                        <a href="#contact" class="px-6 py-3 rounded-xl glass-card font-medium text-gray-200 hover:text-white hover:border-gray-600 transition-all">
-                            Hubungi Saya
-                        </a>
-                        
-                        <!-- Divider line -->
-                        <div class="hidden sm:block w-px h-8 bg-gray-800 mx-2"></div>
-
-                        <!-- Social Icons -->
-                        <div class="flex items-center gap-3">
-                            <a href="https://github.com" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand-500/20 transition-all" title="GitHub">
-                                <i class="fa-brands fa-github text-lg"></i>
-                            </a>
-                            <a href="https://linkedin.com" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand-500/20 transition-all" title="LinkedIn">
-                                <i class="fa-brands fa-linkedin-in text-lg"></i>
-                            </a>
-                            <a href="mailto:iklas@example.com" class="w-10 h-10 rounded-xl glass-card flex items-center justify-center text-gray-400 hover:text-white hover:bg-brand-500/20 transition-all" title="Email">
-                                <i class="fa-solid fa-envelope text-lg"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Avatar & Code Snippet Graphic -->
-                <div class="lg:col-span-5 flex justify-center">
-                    <div class="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96">
-                        <!-- Glowing Backlight background -->
-                        <div class="absolute inset-0 bg-gradient-to-tr from-brand-500/30 to-brand-accent/30 rounded-full blur-3xl animate-pulse-glow"></div>
-                        
-                        <!-- Outer Decorative Frame -->
-                        <div class="absolute -inset-4 rounded-3xl border border-brand-500/20 glass-panel transform rotate-3 animate-float"></div>
-
-                        <!-- Main Profile Avatar Container -->
-                        <div class="relative w-full h-full rounded-2xl overflow-hidden border-2 border-brand-500/40 shadow-2xl glass-panel group">
-                            <!-- Placeholder SVG Avatar with Gradient -->
-                            <svg class="w-full h-full object-cover text-gray-600 bg-gray-900/80" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <defs>
-                                    <linearGradient id="avatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stop-color="#4f46e5" />
-                                        <stop offset="100%" stop-color="#06b6d4" />
-                                    </linearGradient>
-                                </defs>
-                                <path fill="url(#avatarGrad)" opacity="0.15" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                                <circle cx="12" cy="8" r="4" stroke="url(#avatarGrad)" stroke-width="0.5" fill="none" />
-                            </svg>
-                            
-                            <!-- Overlay Info Badge -->
-                            <div class="absolute bottom-4 left-4 right-4 p-3 rounded-xl glass-panel border border-gray-700/60 text-xs font-mono flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                                    <span class="text-gray-300">Git DB Linked</span>
-                                </div>
-                                <span class="text-brand-accent">v2.4.0</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- SECTION: TENTANG SAYA & KEAHLIAN -->
-        <section id="about" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-800/60">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-xs font-mono uppercase tracking-widest text-brand-accent font-semibold mb-2">// TENTANG SAYA &amp; KEAHLIAN</h2>
-                <h3 class="text-3xl font-extrabold text-white">Membangun Solusi Digital Terintegrasi</h3>
-                <p class="text-gray-400 mt-4 text-sm leading-relaxed">
-                    Kombinasi antara pengembangan web modern, pemrosesan basis data relational skala besar, serta integrasi sistem IoT &amp; analitik data.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Card 1: Web Development -->
-                <div class="glass-card p-6 rounded-2xl">
-                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400 text-xl mb-4">
-                        <i class="fa-solid fa-code"></i>
-                    </div>
-                    <h4 class="text-lg font-bold text-white mb-2">Web Application</h4>
-                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">
-                        Merancang arsitektur backend kukuh dengan Laravel &amp; MySQL serta frontend interaktif modern menggunakan Astro dan Tailwind CSS.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">Laravel</span>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">MySQL</span>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">Astro</span>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">Tailwind</span>
-                    </div>
-                </div>
-
-                <!-- Card 2: IoT & Embedded Systems -->
-                <div class="glass-card p-6 rounded-2xl">
-                    <div class="w-12 h-12 rounded-xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent text-xl mb-4">
-                        <i class="fa-solid fa-microchip"></i>
-                    </div>
-                    <h4 class="text-lg font-bold text-white mb-2">IoT &amp; Automation</h4>
-                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">
-                        Integrasi perangkat keras mikrokontroler (ESP32/Arduino) dengan web dashboard real-time via protokol MQTT dan WebSocket.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">ESP32</span>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">MQTT</span>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">Sensors</span>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">C++</span>
-                    </div>
-                </div>
-
-                <!-- Card 3: Data Science & Analytics -->
-                <div class="glass-card p-6 rounded-2xl">
-                    <div class="w-12 h-12 rounded-xl bg-brand-purple/10 border border-brand-purple/30 flex items-center justify-center text-brand-purple text-xl mb-4">
-                        <i class="fa-solid fa-chart-network"></i>
-                    </div>
-                    <h4 class="text-lg font-bold text-white mb-2">Data Science &amp; Analytics</h4>
-                    <p class="text-gray-400 text-sm mb-4 leading-relaxed">
-                        Analisis data terstruktur, visualisasi wawasan bisnis, serta implementasi algoritma machine learning sederhana dengan Python.
-                    </p>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">Python</span>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">Pandas</span>
-                        <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700">Scikit-Learn</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: GRID PROYEK (VIEW PENGUNJUNG) -->
-        <section id="projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-800/60">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-                <div>
-                    <h2 class="text-xs font-mono uppercase tracking-widest text-brand-accent font-semibold mb-2">// PORTOFOLIO PROYEK</h2>
-                    <h3 class="text-3xl font-extrabold text-white">Karya &amp; Eksperimen Terbaru</h3>
-                </div>
-
-                <!-- Filter Buttons -->
-                <div class="flex flex-wrap gap-2 p-1.5 rounded-xl glass-panel border border-gray-800 text-xs font-medium">
-                    <button onclick="filterProjects('all')" class="project-filter-btn px-4 py-2 rounded-lg bg-brand-600 text-white transition-all" data-filter="all">Semua</button>
-                    <button onclick="filterProjects('webapp')" class="project-filter-btn px-4 py-2 rounded-lg text-gray-400 hover:text-white transition-all" data-filter="webapp">Web App</button>
-                    <button onclick="filterProjects('iot')" class="project-filter-btn px-4 py-2 rounded-lg text-gray-400 hover:text-white transition-all" data-filter="iot">IoT</button>
-                    <button onclick="filterProjects('system')" class="project-filter-btn px-4 py-2 rounded-lg text-gray-400 hover:text-white transition-all" data-filter="system">System</button>
-                </div>
-            </div>
-
-            <!-- Project Cards Grid Container -->
-            <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                
-                <!-- Project Card 1 -->
-                <div class="project-card glass-card rounded-2xl overflow-hidden flex flex-col" data-category="webapp">
-                    <div class="relative h-48 overflow-hidden bg-gray-900">
-                        <svg class="w-full h-full object-cover" viewBox="0 0 400 225" fill="none">
-                            <rect width="400" height="225" fill="#111827"/>
-                            <circle cx="200" cy="112" r="60" fill="#4f46e5" fill-opacity="0.2"/>
-                            <rect x="80" y="50" width="240" height="125" rx="8" fill="#1f2937" stroke="#374151" stroke-width="2"/>
-                            <path d="M100 80 H200 M100 100 H300 M100 120 H250" stroke="#818cf8" stroke-width="4" stroke-linecap="round"/>
-                        </svg>
-                        <span class="absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-brand-500/80 text-white backdrop-blur-md">Web App</span>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-indigo-950 text-indigo-300 border border-indigo-800">Laravel</span>
-                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">MySQL</span>
-                        </div>
-                        <h4 class="text-xl font-bold text-white mb-2 group-hover:text-brand-accent transition-colors">Sistem Pengelolaan Anggaran Daerah</h4>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">
-                            Aplikasi manajemen alokasi dan realisasi anggaran berbasis web dengan verifikasi hirarki multi-user dan pelaporan PDF otomatis.
-                        </p>
-                        <div class="mt-auto pt-4 border-t border-gray-800/60 flex items-center justify-between">
-                            <button onclick="openProjectModal('anggaran')" class="text-xs font-mono text-brand-accent hover:underline flex items-center gap-1">
-                                Detail Proyek <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </button>
-                            <a href="https://github.com" target="_blank" class="text-gray-400 hover:text-white"><i class="fa-brands fa-github"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Card 2 -->
-                <div class="project-card glass-card rounded-2xl overflow-hidden flex flex-col" data-category="iot">
-                    <div class="relative h-48 overflow-hidden bg-gray-900">
-                        <svg class="w-full h-full object-cover" viewBox="0 0 400 225" fill="none">
-                            <rect width="400" height="225" fill="#0f172a"/>
-                            <circle cx="200" cy="112" r="70" stroke="#06b6d4" stroke-width="2" stroke-dasharray="4 4"/>
-                            <circle cx="200" cy="112" r="10" fill="#06b6d4"/>
-                            <path d="M140 112 L260 112" stroke="#06b6d4" stroke-width="1.5"/>
-                        </svg>
-                        <span class="absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-cyan-500/80 text-white backdrop-blur-md">IoT</span>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-cyan-950 text-cyan-300 border border-cyan-800">ESP32</span>
-                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-purple-950 text-purple-300 border border-purple-800">MQTT</span>
-                        </div>
-                        <h4 class="text-xl font-bold text-white mb-2">Smart Aquarium Telemetry &amp; Feeder</h4>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">
-                            Sistem pemantauan kualitas air akuarium (pH, Suhu, Keruhan) &amp; pakan otomatis terhubung ke dashboard web real-time.
-                        </p>
-                        <div class="mt-auto pt-4 border-t border-gray-800/60 flex items-center justify-between">
-                            <button onclick="openProjectModal('aquarium')" class="text-xs font-mono text-brand-accent hover:underline flex items-center gap-1">
-                                Detail Proyek <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </button>
-                            <a href="https://github.com" target="_blank" class="text-gray-400 hover:text-white"><i class="fa-brands fa-github"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project Card 3 -->
-                <div class="project-card glass-card rounded-2xl overflow-hidden flex flex-col" data-category="system">
-                    <div class="relative h-48 overflow-hidden bg-gray-900">
-                        <svg class="w-full h-full object-cover" viewBox="0 0 400 225" fill="none">
-                            <rect width="400" height="225" fill="#18181b"/>
-                            <rect x="100" y="40" width="200" height="145" rx="6" fill="#27272a" stroke="#52525b" stroke-width="2"/>
-                            <path d="M120 70 L280 70 M120 100 L240 100 M120 130 L200 130" stroke="#a855f7" stroke-width="3" stroke-linecap="round"/>
-                        </svg>
-                        <span class="absolute top-3 right-3 px-2.5 py-1 rounded-md text-[10px] font-mono font-bold bg-purple-500/80 text-white backdrop-blur-md">System</span>
-                    </div>
-                    <div class="p-6 flex flex-col flex-grow">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-purple-950 text-purple-300 border border-purple-800">Python</span>
-                            <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-800">Scikit-Learn</span>
-                        </div>
-                        <h4 class="text-xl font-bold text-white mb-2">Prediksi Trend Penjualan Retail</h4>
-                        <p class="text-gray-400 text-sm mb-6 line-clamp-2">
-                            Engine data analytics untuk memprediksi stok dan pola pembelian pelanggan toko menggunakan algoritma regresi.
-                        </p>
-                        <div class="mt-auto pt-4 border-t border-gray-800/60 flex items-center justify-between">
-                            <button onclick="openProjectModal('retail')" class="text-xs font-mono text-brand-accent hover:underline flex items-center gap-1">
-                                Detail Proyek <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                            </button>
-                            <a href="https://github.com" target="_blank" class="text-gray-400 hover:text-white"><i class="fa-brands fa-github"></i></a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- SECTION: GIT-AS-A-DATABASE & ADMIN WORKFLOW EXPLANATION -->
-        <section id="git-admin" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-800/60">
-            <div class="glass-panel rounded-3xl p-8 lg:p-12 border border-brand-500/20 relative overflow-hidden">
-                <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <div class="lg:col-span-7 space-y-4">
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-mono">
-                            <i class="fa-brands fa-git-alt"></i> Arsitektur Jamstack &amp; Git CMS
-                        </div>
-                        <h3 class="text-2xl sm:text-3xl font-extrabold text-white">Bagaimana Admin Mengelola Data Portofolio ini?</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">
-                            Website ini tidak membutuhkan database server SQL tradisional yang mahal. **Git Repository (GitHub)** bertindak langsung sebagai database. Setiap proyek baru yang diunggah via Admin Panel akan dikomit (*commit*) sebagai berkas Markdown/JSON baru.
-                        </p>
-
-                        <!-- Workflow Steps -->
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
-                            <div class="glass-card p-4 rounded-xl border-gray-800">
-                                <div class="font-mono text-xs text-brand-accent mb-1">01. CMS Upload</div>
-                                <div class="text-xs font-semibold text-gray-200">Admin mengunggah proyek via GUI</div>
-                            </div>
-                            <div class="glass-card p-4 rounded-xl border-gray-800">
-                                <div class="font-mono text-xs text-brand-purple mb-1">02. Git Commit</div>
-                                <div class="text-xs font-semibold text-gray-200">Otomatis dipush ke GitHub Repo</div>
-                            </div>
-                            <div class="glass-card p-4 rounded-xl border-gray-800">
-                                <div class="font-mono text-xs text-emerald-400 mb-1">03. Auto Deploy</div>
-                                <div class="text-xs font-semibold text-gray-200">Vercel/Netlify mem-build tampilan</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Admin Widget / Simulated Action Box -->
-                    <div class="lg:col-span-5 glass-card p-6 rounded-2xl border-gray-700 bg-gray-900/90 text-center space-y-4">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orange-500 to-amber-500 mx-auto flex items-center justify-center text-white text-2xl shadow-lg shadow-orange-500/20">
-                            <i class="fa-solid fa-folder-plus"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-lg font-bold text-white">Panel Admin CMS</h4>
-                            <p class="text-xs text-gray-400 mt-1">Akses Decap CMS / TinaCMS untuk menambah/mengubah folder proyek &amp; file keterangan.</p>
-                        </div>
-                        <button onclick="toggleAdminModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 font-medium text-white text-sm shadow-md hover:opacity-95 transition-all flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-right-to-bracket"></i>
-                            <span>Simulasi Login Admin Panel</span>
-                        </button>
-                        <div class="text-[11px] font-mono text-gray-500">Path Config: <code>/public/admin/config.yml</code></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: KONTAK -->
-        <section id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-gray-800/60">
-            <div class="max-w-4xl mx-auto">
-                <div class="text-center mb-12">
-                    <h2 class="text-xs font-mono uppercase tracking-widest text-brand-accent font-semibold mb-2">// MARI BEKERJA SAMA</h2>
-                    <h3 class="text-3xl font-extrabold text-white">Kirim Pesan atau Pertanyaan</h3>
-                    <p class="text-gray-400 text-sm mt-2">Punya ide proyek menarik atau ingin berdiskusi teknis? Silakan hubungi saya.</p>
-                </div>
-
-                <form onsubmit="handleContactSubmit(event)" class="glass-card p-8 rounded-3xl space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-xs font-mono text-gray-300 mb-2">NAMA LENGKAP *</label>
-                            <input type="text" required placeholder="Masukkan nama Anda" class="w-full px-4 py-3 rounded-xl bg-gray-900/80 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 text-sm transition-all">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-mono text-gray-300 mb-2">ALAMAT EMAIL *</label>
-                            <input type="email" required placeholder="nama@domain.com" class="w-full px-4 py-3 rounded-xl bg-gray-900/80 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 text-sm transition-all">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-mono text-gray-300 mb-2">SUBJEK</label>
-                        <input type="text" placeholder="Diskusikan Proyek IoT / Web Application" class="w-full px-4 py-3 rounded-xl bg-gray-900/80 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 text-sm transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-mono text-gray-300 mb-2">PESAN *</label>
-                        <textarea rows="4" required placeholder="Tuliskan detail pesan Anda di sini..." class="w-full px-4 py-3 rounded-xl bg-gray-900/80 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:border-brand-500 text-sm transition-all"></textarea>
-                    </div>
-                    <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-accent font-semibold text-white text-sm shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        <span>Kirim Pesan Sekarang</span>
-                    </button>
-                </form>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-gray-800/80 py-8 glass-panel text-xs text-gray-400">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
-                <span class="font-mono font-bold text-white">Iklas Anang Subekti</span>
-                <span>&copy; 2026. All rights reserved.</span>
-            </div>
-            <div class="font-mono text-gray-500 flex items-center gap-2">
-                <span>Built with Tailwind CSS &amp; Git-as-Database</span>
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-6 max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
+        <div class="flex-1 space-y-6 text-center md:text-left">
+            <span class="inline-flex items-center gap-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1 rounded-full text-xs font-semibold">
+                <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span> Git-Powered Architecture
+            </span>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight">
+                Halo, Saya <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">Developer</span>
+            </h1>
+            <p class="text-gray-400 text-lg max-w-xl">
+                Membangun aplikasi web dan sistem modern dengan pendekatan arsitektur portofolio berbasis Git sebagai database yang cepat, aman, dan efisien.
+            </p>
+            <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-2">
+                <a href="#projects" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-3 rounded-xl transition shadow-lg shadow-indigo-600/30">Lihat Proyek</a>
+                <a href="#admin-info" class="bg-cardbg hover:bg-gray-800 border border-gray-700 text-gray-200 font-medium px-6 py-3 rounded-xl transition">Pelajari CMS Git</a>
             </div>
         </div>
+        <div class="relative w-64 h-64 md:w-80 md:h-80 rounded-3xl bg-gradient-to-tr from-indigo-600 to-cyan-400 p-1 shadow-2xl">
+            <div class="w-full h-full bg-cardbg rounded-[22px] flex items-center justify-center overflow-hidden">
+                <i class="fa-solid fa-code text-7xl text-indigo-400/80"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-20 px-6 max-w-6xl mx-auto border-t border-gray-800/80">
+        <div class="text-center mb-16 space-y-2">
+            <h2 class="text-3xl font-bold tracking-tight">Daftar Proyek</h2>
+            <p class="text-gray-400 text-sm">Data proyek diambil secara dinamis dari repository Git (.md & uploads)</p>
+        </div>
+
+        <!-- Grid Proyek Dummy / Placeholder -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div class="bg-cardbg border border-gray-800 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition duration-300 group">
+                <div class="h-48 bg-gray-800 flex items-center justify-center relative overflow-hidden">
+                    <i class="fa-solid fa-laptop-code text-4xl text-gray-600 group-hover:scale-110 transition duration-300"></i>
+                </div>
+                <div class="p-6 space-y-4">
+                    <span class="text-xs font-semibold text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-md">Web App</span>
+                    <h3 class="text-xl font-bold">Sistem Pengelolaan Anggaran</h3>
+                    <p class="text-gray-400 text-sm line-clamp-2">Aplikasi manajemen keuangan berbasis web dengan multi-user authorization dan laporan PDF.</p>
+                    <div class="flex gap-2 pt-2">
+                        <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300">Laravel</span>
+                        <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300">MySQL</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-cardbg border border-gray-800 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition duration-300 group">
+                <div class="h-48 bg-gray-800 flex items-center justify-center relative overflow-hidden">
+                    <i class="fa-solid fa-microchip text-4xl text-gray-600 group-hover:scale-110 transition duration-300"></i>
+                </div>
+                <div class="p-6 space-y-4">
+                    <span class="text-xs font-semibold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-md">IoT System</span>
+                    <h3 class="text-xl font-bold">Smart Aquarium Monitor</h3>
+                    <p class="text-gray-400 text-sm line-clamp-2">Sistem pemantauan kualitas air akuarium pintar terintegrasi dashboard cloud.</p>
+                    <div class="flex gap-2 pt-2">
+                        <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300">ESP32</span>
+                        <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300">Blynk</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-cardbg border border-gray-800 rounded-2xl overflow-hidden hover:border-indigo-500/50 transition duration-300 group">
+                <div class="h-48 bg-gray-800 flex items-center justify-center relative overflow-hidden">
+                    <i class="fa-solid fa-mobile-screen text-4xl text-gray-600 group-hover:scale-110 transition duration-300"></i>
+                </div>
+                <div class="p-6 space-y-4">
+                    <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md">Hardware / Repair</span>
+                    <h3 class="text-xl font-bold">Mobile Repair Diagnostic Tool</h3>
+                    <p class="text-gray-400 text-sm line-clamp-2">Dokumentasi portofolio perbaikan hardware dan modul perangkat seluler.</p>
+                    <div class="flex gap-2 pt-2">
+                        <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300">Hardware</span>
+                        <span class="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300">Diagnostics</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Git CMS Info Section -->
+    <section id="admin-info" class="py-20 px-6 max-w-4xl mx-auto border-t border-gray-800/80">
+        <div class="bg-cardbg border border-gray-800 p-8 rounded-3xl space-y-6">
+            <div class="inline-flex p-3 rounded-2xl bg-indigo-600/20 text-indigo-400">
+                <i class="fa-solid fa-database text-2xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold">Bagaimana Git-as-a-Database Bekerja?</h2>
+            <p class="text-gray-300 leading-relaxed">
+                Website ini tidak memerlukan database konvensional seperti MySQL yang berjalan di server terpisah. Setiap kali Anda mengunggah gambar atau deskripsi proyek baru melalui <a href="/admin/" target="_blank" class="text-indigo-400 underline font-medium">Halaman Admin CMS</a>, sistem secara otomatis melakukan <em>commit & push</em> file Markdown serta aset gambar langsung ke repository GitHub Anda.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                <div class="p-4 bg-darkbg rounded-xl border border-gray-800">
+                    <h4 class="font-semibold text-indigo-400 mb-1"><i class="fa-solid fa-upload mr-2"></i>1. Upload via Admin</h4>
+                    <p class="text-sm text-gray-400">Admin mengisi form dan mengunggah berkas proyek dengan mudah lewat browser.</p>
+                </div>
+                <div class="p-4 bg-darkbg rounded-xl border border-gray-800">
+                    <h4 class="font-semibold text-indigo-400 mb-1"><i class="fa-solid fa-rotate mr-2"></i>2. Auto-Rebuild Vercel</h4>
+                    <p class="text-sm text-gray-400">GitHub mendeteksi perubahan data dan Vercel langsung memperbarui halaman web.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 border-t border-gray-800/80 text-center text-sm text-gray-500">
+        <p>&copy; 2026 Portofolio Pribadi. Ditenagai oleh Git-as-a-Database & Vercel.</p>
     </footer>
 
-    <!-- MODAL POPUP: DETAIL PROYEK -->
-    <div id="projectModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="glass-panel max-w-2xl w-full rounded-3xl border border-gray-700 overflow-hidden shadow-2xl animate-float max-h-[90vh] flex flex-col">
-            <!-- Modal Header -->
-            <div class="p-6 border-b border-gray-800 flex items-center justify-between">
-                <div>
-                    <span id="modalCategory" class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-500/30 text-brand-400">Category</span>
-                    <h3 id="modalTitle" class="text-xl font-bold text-white mt-1">Judul Proyek</h3>
-                </div>
-                <button onclick="closeProjectModal()" class="w-8 h-8 rounded-full glass-card flex items-center justify-center text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <!-- Modal Content (Scrollable) -->
-            <div class="p-6 space-y-4 overflow-y-auto">
-                <div class="w-full h-48 bg-gray-900 rounded-xl flex items-center justify-center border border-gray-800 text-gray-600 font-mono text-xs">
-                    <i class="fa-solid fa-image text-3xl mr-2"></i> Preview Gallery / Screenshots
-                </div>
-                <div>
-                    <h4 class="text-xs font-mono text-gray-400 mb-1">DESKRIPSI LENGKAP &amp; DOKUMEN PROYEK:</h4>
-                    <p id="modalDescription" class="text-sm text-gray-300 leading-relaxed">
-                        Deskripsi rinci mengenai arsitektur sistem, tantangan teknis, serta hasil implementasi proyek ini...
-                    </p>
-                </div>
-                <div>
-                    <h4 class="text-xs font-mono text-gray-400 mb-2">TEKNOLOGI YANG DIGUNAKAN:</h4>
-                    <div id="modalTags" class="flex flex-wrap gap-2">
-                        <!-- Dynamic Tags -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-4 border-t border-gray-800 bg-gray-900/50 flex justify-end gap-3">
-                <button onclick="closeProjectModal()" class="px-4 py-2 rounded-xl text-xs font-medium text-gray-300 hover:text-white">Tutup</button>
-                <a id="modalGithub" href="#" target="_blank" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-xs font-medium flex items-center gap-1.5 hover:bg-brand-500 transition-colors">
-                    <i class="fa-brands fa-github"></i> Repository Git
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL POPUP: SIMULASI CMS ADMIN -->
-    <div id="adminModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-        <div class="glass-panel max-w-md w-full rounded-3xl border border-gray-700 p-6 space-y-6">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center">
-                        <i class="fa-brands fa-git-alt"></i>
-                    </div>
-                    <span class="font-bold text-white">Decap CMS / Git Admin</span>
-                </div>
-                <button onclick="toggleAdminModal()" class="text-gray-400 hover:text-white">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div class="bg-gray-900/90 p-4 rounded-xl border border-gray-800 text-xs font-mono space-y-2">
-                <div class="text-gray-400">// Status Koneksi GitHub API:</div>
-                <div class="text-emerald-400 flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Connected to repo: iklas/portfolio-db
-                </div>
-            </div>
-
-            <form onsubmit="handleAdminUploadSim(event)" class="space-y-4 text-xs">
-                <div>
-                    <label class="block text-gray-300 font-mono mb-1">Judul Proyek Baru</label>
-                    <input type="text" required placeholder="Contoh: Aplikasi Kasir Minimarket" class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white">
-                </div>
-                <div>
-                    <label class="block text-gray-300 font-mono mb-1">Kategori</label>
-                    <select class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white">
-                        <option>Web App</option>
-                        <option>IoT</option>
-                        <option>System</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-gray-300 font-mono mb-1">Upload Assets/Gambar (Git Media Folder)</label>
-                    <input type="file" class="w-full text-gray-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:bg-brand-500/20 file:text-brand-300 hover:file:bg-brand-500/30">
-                </div>
-                <div>
-                    <label class="block text-gray-300 font-mono mb-1">Keterangan / Content (Markdown)</label>
-                    <textarea rows="3" placeholder="# Deskripsi Proyek..." class="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white font-mono"></textarea>
-                </div>
-                <button type="submit" class="w-full py-2.5 rounded-xl bg-orange-600 font-medium text-white hover:bg-orange-500 transition-colors flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-code-commit"></i> Commit &amp; Push to Git DB
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // Mobile Navigation Toggle
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Data Proyek untuk Modal Detail
-        const projectData = {
-            'anggaran': {
-                title: 'Sistem Pengelolaan Anggaran Daerah',
-                category: 'Web App',
-                tags: ['Laravel', 'MySQL', 'TailwindCSS', 'DOMPDF'],
-                description: 'Proyek ini dirancang untuk mempermudah pencatatan alokasi dan realisasi dana anggaran operasional. Memiliki fitur hirarki persetujuan bertingkat, log aktivitas perubahan data, serta ekspor laporan otomatis ke format PDF.',
-                github: 'https://github.com'
-            },
-            'aquarium': {
-                title: 'Smart Aquarium Telemetry & Feeder',
-                category: 'IoT',
-                tags: ['ESP32', 'MQTT', 'C++', 'Node.js', 'ChartJS'],
-                description: 'Sistem IoT cerdas yang mengukur suhu air, tingkat keasaman (pH), dan kekeruhan air secara berkelanjutan. Dilengkapi dengan servo motor untuk pemberian pakan otomatis yang terintegrasi dengan jadwal di web dashboard.',
-                github: 'https://github.com'
-            },
-            'retail': {
-                title: 'Prediksi Trend Penjualan Retail',
-                category: 'System',
-                tags: ['Python', 'Pandas', 'Scikit-Learn', 'Flask'],
-                description: 'Modul analisis data yang memproses ribuan riwayat transaksi ritel untuk memprediksi stok produk yang paling laris untuk bulan berikutnya menggunakan metode Random Forest Regression.',
-                github: 'https://github.com'
-            }
-        };
-
-        // Filter Proyek Function
-        function filterProjects(category) {
-            const cards = document.querySelectorAll('.project-card');
-            const filterBtns = document.querySelectorAll('.project-filter-btn');
-
-            // Toggle Active Button Styling
-            filterBtns.forEach(btn => {
-                if (btn.getAttribute('data-filter') === category) {
-                    btn.classList.add('bg-brand-600', 'text-white');
-                    btn.classList.remove('text-gray-400');
-                } else {
-                    btn.classList.remove('bg-brand-600', 'text-white');
-                    btn.classList.add('text-gray-400');
-                }
-            });
-
-            // Filter Cards
-            cards.forEach(card => {
-                if (category === 'all' || card.getAttribute('data-category') === category) {
-                    card.style.display = 'flex';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        // Project Modal Logic
-        function openProjectModal(key) {
-            const data = projectData[key];
-            if (!data) return;
-
-            document.getElementById('modalTitle').textContent = data.title;
-            document.getElementById('modalCategory').textContent = data.category;
-            document.getElementById('modalDescription').textContent = data.description;
-            document.getElementById('modalGithub').href = data.github;
-
-            const tagsContainer = document.getElementById('modalTags');
-            tagsContainer.innerHTML = '';
-            data.tags.forEach(tag => {
-                const badge = document.createElement('span');
-                badge.className = 'px-2.5 py-1 rounded-md text-xs font-mono bg-gray-800 text-gray-300 border border-gray-700';
-                badge.textContent = tag;
-                tagsContainer.appendChild(badge);
-            });
-
-            document.getElementById('projectModal').classList.remove('hidden');
-        }
-
-        function closeProjectModal() {
-            document.getElementById('projectModal').classList.add('hidden');
-        }
-
-        // Admin CMS Modal Toggle
-        function toggleAdminModal() {
-            const adminModal = document.getElementById('adminModal');
-            adminModal.classList.toggle('hidden');
-        }
-
-        // Simulative Form Actions (Without Alert)
-        function handleContactSubmit(event) {
-            event.preventDefault();
-            const btn = event.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin"></i> Memproses...';
-            btn.disabled = true;
-
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fa-solid fa-check text-emerald-400"></i> Pesan Terkirim!';
-                btn.classList.remove('from-brand-600', 'to-brand-accent');
-                btn.classList.add('bg-emerald-600');
-                event.target.reset();
-
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                    btn.classList.remove('bg-emerald-600');
-                    btn.classList.add('from-brand-600', 'to-brand-accent');
-                }, 3000);
-            }, 1000);
-        }
-
-        function handleAdminUploadSim(event) {
-            event.preventDefault();
-            const btn = event.target.querySelector('button[type="submit"]');
-            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Committing to Git...';
-            
-            setTimeout(() => {
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Commit Success! (Deployed)';
-                btn.classList.remove('bg-orange-600');
-                btn.classList.add('bg-emerald-600');
-
-                setTimeout(() => {
-                    toggleAdminModal();
-                    btn.innerHTML = '<i class="fa-solid fa-code-commit"></i> Commit & Push to Git DB';
-                    btn.classList.remove('bg-emerald-600');
-                    btn.classList.add('bg-orange-600');
-                    event.target.reset();
-                }, 1500);
-            }, 1200);
-        }
-    </script>
 </body>
 </html>
