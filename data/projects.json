@@ -1,0 +1,13 @@
+[
+  {
+    "id": "project-01",
+    "title": "Sistem Informasi Pengelolaan Anggaran",
+    "category": "Web Application",
+    "description": "Aplikasi pelaporan dan tracking anggaran menggunakan metode Waterfall dengan ekspor laporan PDF.",
+    "techStack": ["Laravel", "MySQL", "Bootstrap", "PHP"],
+    "image": "images/projects/anggaran.jpg",
+    "demoUrl": "https://example.com",
+    "githubUrl": "https://github.com/username/project-repo",
+    "date": "2026-08-01"
+  }
+]
