@@ -1,56 +1,137 @@
-
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth dark">
 <head>
-  <meta charset="UTF-8">
-  <title>Admin - Input Proyek</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Git-as-a-Database CMS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#070A13',
+                        cardbg: '#111827',
+                        cardhover: '#1F2937',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glow-effect {
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+        }
+    </style>
 </head>
-<body>
-  <h1>Panel Admin Portofolio</h1>
+<body class="bg-darkbg text-gray-100 antialiased selection:bg-indigo-500 selection:text-white glow-effect min-h-screen">
 
-  <section style="margin-bottom: 20px;">
-    <h3>Konfigurasi Akun GitHub</h3>
-    <input type="text" id="gh-username" placeholder="Username GitHub (cth: XL4AS)">
-    <input type="password" id="gh-token" placeholder="GitHub Personal Access Token (PAT)">
-  </section>
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-darkbg/70 backdrop-blur-xl border-b border-gray-800/60">
+        <div class="max-w-4xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="font-extrabold text-xl tracking-wider bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left text-sm text-indigo-400"></i> PORT<span class="text-white">FOLIO</span>
+            </a>
+            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <i class="fa-solid fa-lock mr-1.5"></i> Admin CMS Mode
+            </span>
+        </div>
+    </header>
 
-  <hr>
+    <!-- Main Container -->
+    <main class="pt-32 pb-24 px-6 max-w-4xl mx-auto space-y-8">
+        
+        <!-- Header Info -->
+        <div class="space-y-2 text-center md:text-left">
+            <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">Git Repository Manager</span>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Panel Input Proyek</h1>
+            <p class="text-gray-400 text-sm">Tambahkan data proyek baru yang secara otomatis akan melakukan commit & push ke repository GitHub Anda.</p>
+        </div>
 
-  <section>
-    <h3>Tambah Proyek Baru</h3>
-    <form id="add-project-form">
-      <div>
-        <label>Judul Proyek:</label><br>
-        <input type="text" id="judul" required>
-      </div>
-      <div>
-        <label>Kategori:</label><br>
-        <select id="kategori">
-          <option value="web">Web</option>
-          <option value="3d">3D Modeling</option>
-          <option value="design">Desain Grafis</option>
-        </select>
-      </div>
-      <div>
-        <label>Deskripsi:</label><br>
-        <textarea id="deskripsi" required></textarea>
-      </div>
-      <div>
-        <label>Link Proyek (Opsional):</label><br>
-        <input type="url" id="link">
-      </div>
-      <div>
-        <label>Upload File / Gambar (Opsional):</label><br>
-        <input type="file" id="file-input">
-      </div>
-      <br>
-      <button type="submit" id="btn-submit">Simpan ke Repository</button>
-    </form>
-  </section>
+        <!-- Form Wrapper Card -->
+        <div class="bg-cardbg border border-gray-800/80 p-8 md:p-10 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none"></div>
 
-  <p id="status-msg"></p>
+            <!-- Bagian 1: Konfigurasi Akses -->
+            <div class="space-y-4 pb-6 border-b border-gray-800/80">
+                <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+                    <i class="fa-solid fa-key text-indigo-400"></i> Konfigurasi Kredensial GitHub
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300">Username GitHub</label>
+                        <input type="text" id="gh-username" value="XL4AS" placeholder="Cth: XL4AS" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300">GitHub Personal Access Token (PAT)</label>
+                        <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                </div>
+            </div>
 
-  <script src="admin.js"></script>
+            <!-- Bagian 2: Form Input Proyek -->
+            <form id="add-project-form" class="space-y-6">
+                <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+                    <i class="fa-solid fa-folder-plus text-indigo-400"></i> Informasi Proyek
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300">Judul Proyek</label>
+                        <input type="text" id="judul" required placeholder="Cth: Smart Aquarium Monitor" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300">Kategori</label>
+                        <select id="kategori" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                            <option value="web">Web Development</option>
+                            <option value="3d">3D Modeling (.glb / Preview)</option>
+                            <option value="design">Desain Grafis / Gambar</option>
+                            <option value="iot">IoT / Hardware</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-gray-300">Deskripsi Singkat</label>
+                    <textarea id="deskripsi" rows="3" required placeholder="Jelaskan secara ringkas mengenai fitur dan teknologi yang digunakan..." class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition resize-none"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300">Link Proyek / Demo (Opsional)</label>
+                        <input type="url" id="link" placeholder="https://example.com" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300">Upload Lampiran (Gambar / Model 3D)</label>
+                        <input type="file" id="file-input" class="w-full bg-darkbg border border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 transition cursor-pointer">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p id="status-msg" class="text-sm font-medium text-indigo-400 text-center md:text-left"></p>
+                    <button type="submit" id="btn-submit" class="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold px-8 py-3.5 rounded-xl transition duration-300 shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Simpan ke Repository</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 border-t border-gray-800/60 text-center text-sm text-gray-500 bg-darkbg">
+        <p>&copy; 2026 Portofolio Pribadi. Ditenagai oleh Git-as-a-Database & GitHub Pages.</p>
+    </footer>
+
+    <!-- Script logika admin tetap terhubung ke file admin.js -->
+    <script src="admin.js"></script>
 </body>
 </html>
