@@ -1,7 +1,4 @@
 const REPO_NAME = 'my-portfolio';
-const DEFAULT_USERNAME = 'XL4S';
-const DEFAULT_TOKEN = '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';
-
 let cachedProjects = []; // Menyimpan data proyek yang sedang dibuka
 
 // Fungsi konversi File ke Base64
@@ -36,11 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const username = DEFAULT_USERNAME;
-      const token = DEFAULT_TOKEN;
+      const username = document.getElementById('gh-username').value.trim();
+      const token = document.getElementById('gh-token').value.trim();
       const status = document.getElementById('status-msg');
       const btn = document.getElementById('btn-submit');
       const editId = document.getElementById('edit-project-id').value;
+
+      if (!username || !token) {
+        alert('Konfigurasi username atau token GitHub tidak ditemukan di HTML!');
+        return;
+      }
 
       btn.disabled = true;
       status.textContent = 'Memproses ke GitHub...';
@@ -69,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let filePath = '';
         if (editId) {
-          // Jika mode edit, pertahankan file lama jika tidak memilih file baru
           const existing = projects.find(p => p.id == editId);
           if (existing) filePath = existing.file_path || '';
         }
@@ -97,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Tambah Baru vs Update Data
         if (editId) {
-          // Mode EDIT
           projects = projects.map(p => {
             if (p.id == editId) {
               return { ...p, judul, kategori, deskripsi, link, file_path: filePath };
@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           status.textContent = 'Memperbarui data proyek...';
         } else {
-          // Mode TAMBAH BARU
           const newProj = {
             id: Date.now(),
             judul,
@@ -156,8 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fungsi Memuat Tabel Proyek
 async function loadProjectsTable() {
-  const username = DEFAULT_USERNAME;
-  const token = DEFAULT_TOKEN;
+  const username = document.getElementById('gh-username')?.value.trim() || 'XL4S';
+  const token = document.getElementById('gh-token')?.value.trim() || '';
   const tbody = document.getElementById('project-table-body');
 
   tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-indigo-400">Memuat data dari GitHub...</td></tr>`;
@@ -171,7 +170,6 @@ async function loadProjectsTable() {
     
     const jsonMetaData = await res.json();
     
-    // Decode base64 UTF-8 secara aman
     const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
     const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
     const decodedString = new TextDecoder().decode(bytes);
@@ -233,8 +231,8 @@ async function deleteProject(id) {
 
   if (!confirm(`Apakah Anda yakin ingin menghapus proyek "${p.judul}"?`)) return;
 
-  const username = DEFAULT_USERNAME;
-  const token = DEFAULT_TOKEN;
+  const username = document.getElementById('gh-username')?.value.trim() || 'XL4S';
+  const token = document.getElementById('gh-token')?.value.trim() || '';
   const status = document.getElementById('status-msg');
 
   status.textContent = 'Menghapus proyek dari GitHub...';
@@ -251,7 +249,6 @@ async function deleteProject(id) {
     const decodedString = new TextDecoder().decode(bytes);
     let projects = JSON.parse(decodedString);
 
-    // Filter hapus item
     projects = projects.filter(item => item.id != id);
 
     const jsonString = JSON.stringify(projects, null, 2);
