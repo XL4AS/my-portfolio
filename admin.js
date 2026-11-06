@@ -33,14 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const username = document.getElementById('gh-username').value.trim();
-      const token = document.getElementById('gh-token').value.trim();
+      const username = document.getElementById('gh-username')?.value.trim() || 'XL4S';
+      const token = document.getElementById('gh-token')?.value.trim() || '';
       const status = document.getElementById('status-msg');
       const btn = document.getElementById('btn-submit');
       const editId = document.getElementById('edit-project-id').value;
 
       if (!username || !token) {
-        alert('Konfigurasi username atau token GitHub tidak ditemukan di HTML!');
+        alert('Konfigurasi username atau token GitHub tidak ditemukan!');
         return;
       }
 
@@ -54,12 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = document.getElementById('link').value;
         const fileInput = document.getElementById('file-input').files[0];
 
-        // 1. Ambil data.json terkini dari repo
+        // 1. Ambil data.json terkini dari repo menggunakan Bearer Token
         const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
 
-        if (!jsonRes.ok) throw new Error('Gagal mengambil data.json dari GitHub.');
+        if (!jsonRes.ok) throw new Error(`Gagal mengambil data.json (Status: ${jsonRes.status})`);
         const jsonMetaData = await jsonRes.json();
         const currentSha = jsonMetaData.sha;
 
@@ -158,6 +158,11 @@ async function loadProjectsTable() {
   const username = document.getElementById('gh-username')?.value.trim() || 'XL4S';
   const token = document.getElementById('gh-token')?.value.trim() || '';
   const tbody = document.getElementById('project-table-body');
+
+  if (!token) {
+    tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-red-400">Token GitHub tidak ditemukan di HTML!</td></tr>`;
+    return;
+  }
 
   tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-indigo-400">Memuat data dari GitHub...</td></tr>`;
 
