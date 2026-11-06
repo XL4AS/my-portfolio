@@ -76,10 +76,21 @@
             <div class="bg-cardbg border border-gray-800/80 p-8 md:p-10 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none"></div>
 
-                <!-- Input Kredensial GitHub Tersembunyi (Token Baru Otomatis Terpasang) -->
-                <div class="hidden">
-                    <input type="text" id="gh-username" value="XL4S">
-                    <input type="password" id="gh-token" value="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">
+                <!-- Kredensial GitHub (Sudah Terisi Otomatis) -->
+                <div class="space-y-4 pb-6 border-b border-gray-800/80">
+                    <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+                        <i class="fa-solid fa-key text-indigo-400"></i> Konfigurasi Kredensial GitHub
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-gray-300">Username GitHub</label>
+                            <input type="text" id="gh-username" value="XL4S" placeholder="Cth: XL4S" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-gray-300">GitHub Personal Access Token (PAT)</label>
+                            <input type="password" id="gh-token" value="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" placeholder="ghp_... atau github_pat_..." class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Form Input / Edit Proyek -->
