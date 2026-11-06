@@ -143,13 +143,12 @@
         <p>&copy; 2026 Portofolio Pribadi. Ditenagai oleh Git-as-a-Database & GitHub Pages.</p>
     </footer>
 
-    <!-- Script untuk Membaca data.json secara Dinamis -->
+    <!-- Script untuk Membaca data.json dan Merender Poster Gambar -->
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const projectListContainer = document.getElementById('project-list');
 
             try {
-                // Mengambil file data.json dengan timestamp agar tidak terkena cache browser
                 const response = await fetch(`data.json?t=${Date.now()}`);
                 
                 if (!response.ok) {
@@ -167,12 +166,9 @@
                     return;
                 }
 
-                // Kosongkan kontainer sebelum merender
                 projectListContainer.innerHTML = '';
 
-                // Loop data proyek dan render ke HTML
                 projects.forEach(p => {
-                    // Tentukan ikon berdasarkan kategori
                     let iconClass = 'fa-laptop-code';
                     let categoryColor = 'indigo';
                     
@@ -187,20 +183,32 @@
                         categoryColor = 'emerald';
                     }
 
-                    // Cek apakah ada file lampiran yang diunggah
-                    let fileBadgeOrLink = '';
+                    let mediaContent = '';
                     if (p.file_path) {
-                        fileBadgeOrLink = `
-                            <a href="${p.file_path}" target="_blank" class="text-xs bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg transition border border-indigo-500/30 flex items-center gap-1.5 w-fit">
-                                <i class="fa-solid fa-paperclip"></i> Lihat Berkas / Lampiran
-                            </a>
+                        const isImage = /\.(jpg|jpeg|png|webp|gif)$/i.test(p.file_path);
+                        
+                        if (isImage) {
+                            mediaContent = `
+                                <img src="${p.file_path}" alt="${p.judul}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            `;
+                        } else {
+                            mediaContent = `
+                                <i class="fa-solid ${iconClass} text-5xl text-${categoryColor}-400/60 group-hover:scale-110 group-hover:text-${categoryColor}-400 transition duration-500"></i>
+                                <a href="${p.file_path}" target="_blank" class="absolute bottom-4 left-4 z-20 text-xs bg-darkbg/80 hover:bg-darkbg text-gray-200 px-3 py-1.5 rounded-lg backdrop-blur-md border border-gray-800 transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-paperclip text-${categoryColor}-400"></i> Unduh Lampiran
+                                </a>
+                            `;
+                        }
+                    } else {
+                        mediaContent = `
+                            <i class="fa-solid ${iconClass} text-5xl text-${categoryColor}-400/60 group-hover:scale-110 group-hover:text-${categoryColor}-400 transition duration-500"></i>
                         `;
                     }
 
                     let demoLink = '';
                     if (p.link) {
                         demoLink = `
-                            <a href="${p.link}" target="_blank" class="text-xs bg-darkbg hover:bg-gray-800 border border-gray-800 px-3 py-1.5 rounded-lg text-gray-300 transition flex items-center gap-1.5 w-fit">
+                            <a href="${p.link}" target="_blank" class="text-xs bg-darkbg hover:bg-gray-800 border border-gray-800 px-3 py-1.5 rounded-lg text-gray-300 transition flex items-center gap-1.5">
                                 <i class="fa-solid fa-external-link-alt"></i> Demo / Link
                             </a>
                         `;
@@ -209,8 +217,8 @@
                     const cardHTML = `
                         <div class="bg-cardbg border border-gray-800/80 rounded-3xl overflow-hidden hover:border-${categoryColor}-500/40 hover:shadow-2xl hover:shadow-${categoryColor}-500/10 transition duration-300 group flex flex-col">
                             <div class="h-52 bg-gray-900 flex items-center justify-center relative overflow-hidden">
-                                <div class="absolute inset-0 bg-gradient-to-t from-cardbg to-transparent opacity-60 z-10"></div>
-                                <i class="fa-solid ${iconClass} text-5xl text-${categoryColor}-400/60 group-hover:scale-110 group-hover:text-${categoryColor}-400 transition duration-500"></i>
+                                <div class="absolute inset-0 bg-gradient-to-t from-cardbg via-transparent to-transparent opacity-40 z-10 pointer-events-none"></div>
+                                ${mediaContent}
                                 <span class="absolute top-4 right-4 z-20 text-xs font-semibold text-${categoryColor}-300 bg-${categoryColor}-500/20 border border-${categoryColor}-500/30 px-3 py-1 rounded-full backdrop-blur-md uppercase">${p.kategori || 'umum'}</span>
                             </div>
                             <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
@@ -219,7 +227,7 @@
                                     <p class="text-gray-400 text-sm leading-relaxed">${p.deskripsi || 'Tidak ada deskripsi.'}</p>
                                 </div>
                                 <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-800/60 items-center justify-between">
-                                    ${fileBadgeOrLink}
+                                    <span class="text-xs text-gray-500 font-mono">ID: ${p.id}</span>
                                     ${demoLink}
                                 </div>
                             </div>
