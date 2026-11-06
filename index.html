@@ -95,63 +95,11 @@
             <p class="text-gray-400 text-sm max-w-md">Data di bawah ini dimuat secara dinamis dari file database repository Git dan folder penyimpanan.</p>
         </div>
 
-        <!-- Grid Proyek (Struktur disesuaikan agar nantinya siap terhubung dengan app.js) -->
+        <!-- Grid Proyek Dinamis -->
         <div id="project-list" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <!-- Card 1 -->
-            <div class="bg-cardbg border border-gray-800/80 rounded-3xl overflow-hidden hover:border-indigo-500/40 hover:shadow-2xl hover:shadow-indigo-500/10 transition duration-300 group flex flex-col">
-                <div class="h-52 bg-gray-900 flex items-center justify-center relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-t from-cardbg to-transparent opacity-60 z-10"></div>
-                    <i class="fa-solid fa-laptop-code text-5xl text-indigo-400/60 group-hover:scale-110 group-hover:text-indigo-400 transition duration-500"></i>
-                    <span class="absolute top-4 right-4 z-20 text-xs font-semibold text-indigo-300 bg-indigo-500/20 border border-indigo-500/30 px-3 py-1 rounded-full backdrop-blur-md">Web App</span>
-                </div>
-                <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
-                    <div class="space-y-2">
-                        <h3 class="text-xl font-bold group-hover:text-indigo-400 transition">Sistem Pengelolaan Anggaran</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed line-clamp-2">Aplikasi manajemen keuangan berbasis web dengan fitur multi-user authorization dan laporan PDF otomatis.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-800/60">
-                        <span class="text-xs bg-darkbg border border-gray-800 px-2.5 py-1 rounded-lg text-gray-300 font-medium">Laravel</span>
-                        <span class="text-xs bg-darkbg border border-gray-800 px-2.5 py-1 rounded-lg text-gray-300 font-medium">MySQL</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="bg-cardbg border border-gray-800/80 rounded-3xl overflow-hidden hover:border-cyan-500/40 hover:shadow-2xl hover:shadow-cyan-500/10 transition duration-300 group flex flex-col">
-                <div class="h-52 bg-gray-900 flex items-center justify-center relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-t from-cardbg to-transparent opacity-60 z-10"></div>
-                    <i class="fa-solid fa-microchip text-5xl text-cyan-400/60 group-hover:scale-110 group-hover:text-cyan-400 transition duration-500"></i>
-                    <span class="absolute top-4 right-4 z-20 text-xs font-semibold text-cyan-300 bg-cyan-500/20 border border-cyan-500/30 px-3 py-1 rounded-full backdrop-blur-md">IoT System</span>
-                </div>
-                <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
-                    <div class="space-y-2">
-                        <h3 class="text-xl font-bold group-hover:text-cyan-400 transition">Smart Aquarium Monitor</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed line-clamp-2">Sistem pemantauan kualitas air akuarium pintar terintegrasi mikrokontroler dan dashboard cloud.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-800/60">
-                        <span class="text-xs bg-darkbg border border-gray-800 px-2.5 py-1 rounded-lg text-gray-300 font-medium">ESP32</span>
-                        <span class="text-xs bg-darkbg border border-gray-800 px-2.5 py-1 rounded-lg text-gray-300 font-medium">Blynk</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="bg-cardbg border border-gray-800/80 rounded-3xl overflow-hidden hover:border-emerald-500/40 hover:shadow-2xl hover:shadow-emerald-500/10 transition duration-300 group flex flex-col">
-                <div class="h-52 bg-gray-900 flex items-center justify-center relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-t from-cardbg to-transparent opacity-60 z-10"></div>
-                    <i class="fa-solid fa-mobile-screen text-5xl text-emerald-400/60 group-hover:scale-110 group-hover:text-emerald-400 transition duration-500"></i>
-                    <span class="absolute top-4 right-4 z-20 text-xs font-semibold text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 px-3 py-1 rounded-full backdrop-blur-md">Hardware</span>
-                </div>
-                <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
-                    <div class="space-y-2">
-                        <h3 class="text-xl font-bold group-hover:text-emerald-400 transition">Mobile Repair Diagnostic Tool</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed line-clamp-2">Dokumentasi portofolio perbaikan hardware dan modul perangkat seluler profesional.</p>
-                    </div>
-                    <div class="flex flex-wrap gap-2 pt-2 border-t border-gray-800/60">
-                        <span class="text-xs bg-darkbg border border-gray-800 px-2.5 py-1 rounded-lg text-gray-300 font-medium">Hardware</span>
-                        <span class="text-xs bg-darkbg border border-gray-800 px-2.5 py-1 rounded-lg text-gray-300 font-medium">Diagnostics</span>
-                    </div>
-                </div>
+            <div class="col-span-3 text-center py-12 text-gray-500">
+                <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-indigo-400"></i>
+                <p>Memuat proyek dari database...</p>
             </div>
         </div>
     </section>
@@ -195,5 +143,102 @@
         <p>&copy; 2026 Portofolio Pribadi. Ditenagai oleh Git-as-a-Database & GitHub Pages.</p>
     </footer>
 
+    <!-- Script untuk Membaca data.json secara Dinamis -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const projectListContainer = document.getElementById('project-list');
+
+            try {
+                // Mengambil file data.json dengan timestamp agar tidak terkena cache browser
+                const response = await fetch(`data.json?t=${Date.now()}`);
+                
+                if (!response.ok) {
+                    throw new Error('File data.json belum tersedia atau gagal dimuat.');
+                }
+
+                const projects = await response.json();
+
+                if (!Array.isArray(projects) || projects.length === 0) {
+                    projectListContainer.innerHTML = `
+                        <div class="col-span-3 text-center py-12 text-gray-500">
+                            <p>Belum ada proyek yang ditambahkan. Silakan tambah melalui <a href="admin.html" class="text-indigo-400 underline">Panel Admin</a>.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Kosongkan kontainer sebelum merender
+                projectListContainer.innerHTML = '';
+
+                // Loop data proyek dan render ke HTML
+                projects.forEach(p => {
+                    // Tentukan ikon berdasarkan kategori
+                    let iconClass = 'fa-laptop-code';
+                    let categoryColor = 'indigo';
+                    
+                    if (p.kategori === '3d') {
+                        iconClass = 'fa-cube';
+                        categoryColor = 'purple';
+                    } else if (p.kategori === 'design') {
+                        iconClass = 'fa-palette';
+                        categoryColor = 'cyan';
+                    } else if (p.kategori === 'iot') {
+                        iconClass = 'fa-microchip';
+                        categoryColor = 'emerald';
+                    }
+
+                    // Cek apakah ada file lampiran yang diunggah
+                    let fileBadgeOrLink = '';
+                    if (p.file_path) {
+                        fileBadgeOrLink = `
+                            <a href="${p.file_path}" target="_blank" class="text-xs bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1.5 rounded-lg transition border border-indigo-500/30 flex items-center gap-1.5 w-fit">
+                                <i class="fa-solid fa-paperclip"></i> Lihat Berkas / Lampiran
+                            </a>
+                        `;
+                    }
+
+                    let demoLink = '';
+                    if (p.link) {
+                        demoLink = `
+                            <a href="${p.link}" target="_blank" class="text-xs bg-darkbg hover:bg-gray-800 border border-gray-800 px-3 py-1.5 rounded-lg text-gray-300 transition flex items-center gap-1.5 w-fit">
+                                <i class="fa-solid fa-external-link-alt"></i> Demo / Link
+                            </a>
+                        `;
+                    }
+
+                    const cardHTML = `
+                        <div class="bg-cardbg border border-gray-800/80 rounded-3xl overflow-hidden hover:border-${categoryColor}-500/40 hover:shadow-2xl hover:shadow-${categoryColor}-500/10 transition duration-300 group flex flex-col">
+                            <div class="h-52 bg-gray-900 flex items-center justify-center relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-t from-cardbg to-transparent opacity-60 z-10"></div>
+                                <i class="fa-solid ${iconClass} text-5xl text-${categoryColor}-400/60 group-hover:scale-110 group-hover:text-${categoryColor}-400 transition duration-500"></i>
+                                <span class="absolute top-4 right-4 z-20 text-xs font-semibold text-${categoryColor}-300 bg-${categoryColor}-500/20 border border-${categoryColor}-500/30 px-3 py-1 rounded-full backdrop-blur-md uppercase">${p.kategori || 'umum'}</span>
+                            </div>
+                            <div class="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                                <div class="space-y-2">
+                                    <h3 class="text-xl font-bold group-hover:text-${categoryColor}-400 transition">${p.judul || 'Tanpa Judul'}</h3>
+                                    <p class="text-gray-400 text-sm leading-relaxed">${p.deskripsi || 'Tidak ada deskripsi.'}</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 pt-4 border-t border-gray-800/60 items-center justify-between">
+                                    ${fileBadgeOrLink}
+                                    ${demoLink}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    projectListContainer.insertAdjacentHTML('beforeend', cardHTML);
+                });
+
+            } catch (err) {
+                console.error(err);
+                projectListContainer.innerHTML = `
+                    <div class="col-span-3 text-center py-12 text-red-400">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl mb-2"></i>
+                        <p>Gagal memuat data proyek. Pastikan file <code class="bg-darkbg px-2 py-1 rounded">data.json</code> sudah ada di repository Anda.</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
 </body>
 </html>
