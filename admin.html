@@ -43,20 +43,28 @@
     <!-- Main Container -->
     <main class="pt-32 pb-24 px-6 max-w-4xl mx-auto w-full flex-grow flex items-center justify-center">
         
-        <!-- CARD 1: FORM LOGIN SANDI -->
+        <!-- CARD 1: FORM LOGIN & KREDENSIAL -->
         <div id="login-box" class="w-full max-w-md bg-cardbg border border-gray-800/80 p-8 rounded-3xl shadow-2xl space-y-6">
             <div class="text-center space-y-2">
                 <div class="w-14 h-14 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl mx-auto flex items-center justify-center text-indigo-400 text-xl shadow-inner">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h1 class="text-2xl font-extrabold tracking-tight">Otorisasi Admin</h1>
-                <p class="text-gray-400 text-sm">Masukkan sandi akses untuk membuka panel pengelola.</p>
+                <p class="text-gray-400 text-sm">Masukkan sandi dan kredensial GitHub Anda untuk masuk.</p>
             </div>
 
             <form id="login-form" class="space-y-4">
                 <div class="space-y-2">
-                    <label class="text-xs font-semibold text-gray-300">Sandi Akses</label>
+                    <label class="text-xs font-semibold text-gray-300">Sandi Akses Panel</label>
                     <input type="password" id="admin-pass" required placeholder="••••••••••••" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-gray-300">Username GitHub</label>
+                    <input type="text" id="login-username" required placeholder="Cth: XL4S" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-gray-300">GitHub Personal Access Token (PAT)</label>
+                    <input type="password" id="login-token" required placeholder="github_pat_..." class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
                 </div>
                 <p id="login-error" class="text-xs text-red-400 hidden">Sandi salah! Silakan coba lagi.</p>
                 <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold py-3 rounded-xl transition duration-300 shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
@@ -65,33 +73,27 @@
             </form>
         </div>
 
-        <!-- CARD 2: PANEL UTAMA ADMIN -->
+        <!-- CARD 2: PANEL UTAMA ADMIN (Input Kredensial disembunyikan di sini karena sudah otomatis) -->
         <div id="admin-panel" class="hidden w-full space-y-8">
-            <div class="space-y-2 text-center md:text-left">
-                <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">Git Repository Manager</span>
-                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Panel Pengelolaan Proyek</h1>
-                <p class="text-gray-400 text-sm">Tambah, edit, atau hapus data proyek secara langsung di repository GitHub Anda.</p>
+            <div class="space-y-2 text-center md:text-left flex justify-between items-end">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">Git Repository Manager</span>
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Panel Pengelolaan Proyek</h1>
+                    <p class="text-gray-400 text-sm">Tambah, edit, atau hapus data proyek secara langsung di repository GitHub Anda.</p>
+                </div>
+                <button onclick="logoutAdmin()" class="text-xs bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white px-4 py-2 rounded-xl transition border border-red-500/30 flex items-center gap-2 h-fit">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                </button>
+            </div>
+
+            <!-- Input tersembunyi untuk dibaca oleh admin.js -->
+            <div class="hidden">
+                <input type="text" id="gh-username">
+                <input type="password" id="gh-token">
             </div>
 
             <div class="bg-cardbg border border-gray-800/80 p-8 md:p-10 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none"></div>
-
-                <!-- Kredensial GitHub (Sudah Terisi Otomatis) -->
-                <div class="space-y-4 pb-6 border-b border-gray-800/80">
-                    <h3 class="text-lg font-bold flex items-center gap-2 text-white">
-                        <i class="fa-solid fa-key text-indigo-400"></i> Konfigurasi Kredensial GitHub
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <label class="text-xs font-semibold text-gray-300">Username GitHub</label>
-                            <input type="text" id="gh-username" value="XL4S" placeholder="Cth: XL4S" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-xs font-semibold text-gray-300">GitHub Personal Access Token (PAT)</label>
-                            <input type="password" id="gh-token" value="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" placeholder="ghp_... atau github_pat_..." class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Form Input / Edit Proyek -->
                 <form id="add-project-form" class="space-y-6">
@@ -191,24 +193,48 @@
         const loginBox = document.getElementById('login-box');
         const adminPanel = document.getElementById('admin-panel');
         const loginError = document.getElementById('login-error');
+        const inputUsername = document.getElementById('gh-username');
+        const inputToken = document.getElementById('gh-token');
 
+        // Cek apakah token dan login sudah tersimpan di browser sebelumnya
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             loginBox.classList.add('hidden');
             adminPanel.classList.remove('hidden');
+            
+            // Muat otomatis ke input tersembunyi
+            if(localStorage.getItem('saved_gh_username')) inputUsername.value = localStorage.getItem('saved_gh_username');
+            if(localStorage.getItem('saved_gh_token')) inputToken.value = localStorage.getItem('saved_gh_token');
         }
 
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const inputPass = document.getElementById('admin-pass').value;
+            const typedUsername = document.getElementById('login-username').value.trim();
+            const typedToken = document.getElementById('login-token').value.trim();
 
             if (inputPass === PASSWORD_RAHASIA) {
+                // Simpan status login di session storage
                 sessionStorage.setItem('isLoggedIn', 'true');
+                
+                // Simpan username & token secara permanen di browser
+                localStorage.setItem('saved_gh_username', typedUsername);
+                localStorage.setItem('saved_gh_token', typedToken);
+
+                // Masukkan ke input tersembunyi
+                inputUsername.value = typedUsername;
+                inputToken.value = typedToken;
+
                 loginBox.classList.add('hidden');
                 adminPanel.classList.remove('hidden');
             } else {
                 loginError.classList.remove('hidden');
             }
         });
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('isLoggedIn');
+            location.reload();
+        }
     </script>
     <script src="admin.js"></script>
 </body>
