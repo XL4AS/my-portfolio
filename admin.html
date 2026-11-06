@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel | Git-as-a-Database CMS</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -20,15 +19,11 @@
             }
         }
     </script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glow-effect {
-            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
-        }
+        .glow-effect { background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 70%); }
     </style>
 </head>
 <body class="bg-darkbg text-gray-100 antialiased selection:bg-indigo-500 selection:text-white glow-effect min-h-screen flex flex-col justify-between">
@@ -70,12 +65,12 @@
             </form>
         </div>
 
-        <!-- CARD 2: PANEL UTAMA ADMIN (Disembunyikan sebelum login berhasil) -->
+        <!-- CARD 2: PANEL UTAMA ADMIN -->
         <div id="admin-panel" class="hidden w-full space-y-8">
             <div class="space-y-2 text-center md:text-left">
                 <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">Git Repository Manager</span>
-                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Panel Input Proyek</h1>
-                <p class="text-gray-400 text-sm">Tambahkan data proyek baru yang secara otomatis akan melakukan commit & push ke repository GitHub Anda.</p>
+                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Panel Pengelolaan Proyek</h1>
+                <p class="text-gray-400 text-sm">Tambah, edit, atau hapus data proyek secara langsung di repository GitHub Anda.</p>
             </div>
 
             <div class="bg-cardbg border border-gray-800/80 p-8 md:p-10 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
@@ -93,15 +88,17 @@
                         </div>
                         <div class="space-y-2">
                             <label class="text-xs font-semibold text-gray-300">GitHub Personal Access Token (PAT)</label>
-                            <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                            <input type="password" id="gh-token" placeholder="ghp_... atau github_pat_..." class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
                         </div>
                     </div>
                 </div>
 
-                <!-- Form Input Proyek -->
+                <!-- Form Input / Edit Proyek -->
                 <form id="add-project-form" class="space-y-6">
-                    <h3 class="text-lg font-bold flex items-center gap-2 text-white">
-                        <i class="fa-solid fa-folder-plus text-indigo-400"></i> Informasi Proyek
+                    <input type="hidden" id="edit-project-id" value="">
+                    
+                    <h3 id="form-title" class="text-lg font-bold flex items-center gap-2 text-white">
+                        <i class="fa-solid fa-folder-plus text-indigo-400"></i> Tambah Proyek Baru
                     </h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -131,40 +128,70 @@
                             <input type="url" id="link" placeholder="https://example.com" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
                         </div>
                         <div class="space-y-2">
-                            <label class="text-xs font-semibold text-gray-300">Upload Lampiran (Gambar / Model 3D)</label>
+                            <label class="text-xs font-semibold text-gray-300">Upload Lampiran (Biarkan kosong jika tidak mengubah file)</label>
                             <input type="file" id="file-input" class="w-full bg-darkbg border border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 transition cursor-pointer">
                         </div>
                     </div>
 
                     <div class="pt-4 flex flex-col md:flex-row items-center justify-between gap-4">
                         <p id="status-msg" class="text-sm font-medium text-indigo-400 text-center md:text-left"></p>
-                        <button type="submit" id="btn-submit" class="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold px-8 py-3.5 rounded-xl transition duration-300 shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <span>Simpan ke Repository</span>
-                        </button>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <button type="button" id="btn-cancel-edit" class="hidden w-full md:w-auto bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold px-5 py-3.5 rounded-xl transition text-sm">
+                                Batal Edit
+                            </button>
+                            <button type="submit" id="btn-submit" class="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold px-8 py-3.5 rounded-xl transition duration-300 shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span id="btn-submit-text">Simpan ke Repository</span>
+                            </button>
+                        </div>
                     </div>
                 </form>
+            </div>
+
+            <!-- TABLE DAFTAR PROYEK UTAMA -->
+            <div class="bg-cardbg border border-gray-800/80 p-6 rounded-3xl shadow-2xl space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+                        <i class="fa-solid fa-list-check text-indigo-400"></i> Kelola Proyek Tersimpan
+                    </h3>
+                    <button id="btn-refresh-list" class="text-xs bg-darkbg hover:bg-gray-800 border border-gray-800 px-3 py-1.5 rounded-lg text-gray-300 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate"></i> Refresh Daftar
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-darkbg text-xs uppercase text-gray-300 border-b border-gray-800">
+                            <tr>
+                                <th class="py-3 px-4">Judul Proyek</th>
+                                <th class="py-3 px-4">Kategori</th>
+                                <th class="py-3 px-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="project-table-body" class="divide-y divide-gray-800">
+                            <tr>
+                                <td colspan="3" class="py-6 text-center text-gray-500">Klik "Refresh Daftar" untuk memuat proyek dari repository.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Footer -->
     <footer class="py-8 px-6 border-t border-gray-800/60 text-center text-sm text-gray-500 bg-darkbg">
         <p>&copy; 2026 Portofolio Pribadi. Ditenagai oleh Git-as-a-Database & GitHub Pages.</p>
     </footer>
 
-    <!-- Script Autentikasi & Logika Admin -->
     <script>
-        // Ganti 'admin123' dengan sandi rahasia yang Anda inginkan
-        const PASSWORD_RAHASIA = 'admineanang'; 
+        const PASSWORD_RAHASIA = 'admin123'; 
 
         const loginForm = document.getElementById('login-form');
         const loginBox = document.getElementById('login-box');
         const adminPanel = document.getElementById('admin-panel');
         const loginError = document.getElementById('login-error');
 
-        // Cek apakah sudah pernah login sebelumnya di sesi browser ini
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             loginBox.classList.add('hidden');
             adminPanel.classList.remove('hidden');
