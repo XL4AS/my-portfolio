@@ -1,292 +1,204 @@
-const REPO_NAME = 'my-portfolio';
-const DEFAULT_USERNAME = 'XL4S';
-const DEFAULT_TOKEN = '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';
-
-let cachedProjects = []; // Menyimpan data proyek yang sedang dibuka
-
-// Fungsi konversi File ke Base64
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = error => reject(error);
-  });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('add-project-form');
-  const btnRefresh = document.getElementById('btn-refresh-list');
-  const btnCancelEdit = document.getElementById('btn-cancel-edit');
-
-  // Load daftar proyek saat tombol Refresh diklik
-  if (btnRefresh) {
-    btnRefresh.addEventListener('click', loadProjectsTable);
-  }
-
-  // Batalkan Mode Edit
-  if (btnCancelEdit) {
-    btnCancelEdit.addEventListener('click', () => {
-      resetFormState();
-    });
-  }
-
-  // Submit Form (Bisa Tambah Baru atau Update Edit)
-  if (form) {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const username = DEFAULT_USERNAME;
-      const token = DEFAULT_TOKEN;
-      const status = document.getElementById('status-msg');
-      const btn = document.getElementById('btn-submit');
-      const editId = document.getElementById('edit-project-id').value;
-
-      btn.disabled = true;
-      status.textContent = 'Memproses ke GitHub...';
-
-      try {
-        const judul = document.getElementById('judul').value;
-        const kategori = document.getElementById('kategori').value;
-        const deskripsi = document.getElementById('deskripsi').value;
-        const link = document.getElementById('link').value;
-        const fileInput = document.getElementById('file-input').files[0];
-
-        // 1. Ambil data.json terkini dari repo
-        const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!jsonRes.ok) throw new Error('Gagal mengambil data.json dari GitHub.');
-        const jsonMetaData = await jsonRes.json();
-        const currentSha = jsonMetaData.sha;
-
-        // Decode base64 UTF-8 secara aman
-        const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
-        const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
-        const decodedString = new TextDecoder().decode(bytes);
-        let projects = JSON.parse(decodedString);
-
-        let filePath = '';
-        if (editId) {
-          // Jika mode edit, pertahankan file lama jika tidak memilih file baru
-          const existing = projects.find(p => p.id == editId);
-          if (existing) filePath = existing.file_path || '';
-        }
-
-        // 2. Upload file jika ada file baru yang dipilih
-        if (fileInput) {
-          status.textContent = 'Mengunggah lampiran file...';
-          const base64File = await fileToBase64(fileInput);
-          const cleanFileName = fileInput.name.replace(/\s+/g, '_');
-          const fileName = `${Date.now()}_${cleanFileName}`;
-          filePath = `uploads/${fileName}`;
-
-          await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/${filePath}`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              message: `Upload ${fileName}`,
-              content: base64File
-            })
-          });
-        }
-
-        // 3. Tambah Baru vs Update Data
-        if (editId) {
-          // Mode EDIT
-          projects = projects.map(p => {
-            if (p.id == editId) {
-              return { ...p, judul, kategori, deskripsi, link, file_path: filePath };
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Git-as-a-Database CMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#070A13',
+                        cardbg: '#111827',
+                        cardhover: '#1F2937',
+                    }
+                }
             }
-            return p;
-          });
-          status.textContent = 'Memperbarui data proyek...';
-        } else {
-          // Mode TAMBAH BARU
-          const newProj = {
-            id: Date.now(),
-            judul,
-            kategori,
-            deskripsi,
-            link,
-            file_path: filePath
-          };
-          projects.push(newProj);
-          status.textContent = 'Menambahkan proyek baru...';
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glow-effect { background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 70%); }
+    </style>
+</head>
+<body class="bg-darkbg text-gray-100 antialiased selection:bg-indigo-500 selection:text-white glow-effect min-h-screen flex flex-col justify-between">
+
+    <!-- Navbar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-darkbg/70 backdrop-blur-xl border-b border-gray-800/60">
+        <div class="max-w-4xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="font-extrabold text-xl tracking-wider bg-gradient-to-r from-indigo-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left text-sm text-indigo-400"></i> PORT<span class="text-white">FOLIO</span>
+            </a>
+            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <i class="fa-solid fa-lock mr-1.5"></i> Protected CMS
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="pt-32 pb-24 px-6 max-w-4xl mx-auto w-full flex-grow flex items-center justify-center">
+        
+        <!-- CARD 1: FORM LOGIN SANDI -->
+        <div id="login-box" class="w-full max-w-md bg-cardbg border border-gray-800/80 p-8 rounded-3xl shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <div class="w-14 h-14 bg-indigo-600/10 border border-indigo-500/20 rounded-2xl mx-auto flex items-center justify-center text-indigo-400 text-xl shadow-inner">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h1 class="text-2xl font-extrabold tracking-tight">Otorisasi Admin</h1>
+                <p class="text-gray-400 text-sm">Masukkan sandi akses untuk membuka panel pengelola.</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div class="space-y-2">
+                    <label class="text-xs font-semibold text-gray-300">Sandi Akses</label>
+                    <input type="password" id="admin-pass" required placeholder="••••••••••••" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                </div>
+                <p id="login-error" class="text-xs text-red-400 hidden">Sandi salah! Silakan coba lagi.</p>
+                <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold py-3 rounded-xl transition duration-300 shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket text-xs"></i> Masuk Panel
+                </button>
+            </form>
+        </div>
+
+        <!-- CARD 2: PANEL UTAMA ADMIN -->
+        <div id="admin-panel" class="hidden w-full space-y-8">
+            <div class="space-y-2 text-center md:text-left">
+                <span class="text-xs font-bold uppercase tracking-widest text-indigo-400">Git Repository Manager</span>
+                <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Panel Pengelolaan Proyek</h1>
+                <p class="text-gray-400 text-sm">Tambah, edit, atau hapus data proyek secara langsung di repository GitHub Anda.</p>
+            </div>
+
+            <div class="bg-cardbg border border-gray-800/80 p-8 md:p-10 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-80 h-80 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Input Kredensial GitHub Tersembunyi (Nilai Default Otomatis Terbaca JS) -->
+                <div class="hidden">
+                    <input type="text" id="gh-username" value="XL4S">
+                    <input type="password" id="gh-token" value="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">
+                </div>
+
+                <!-- Form Input / Edit Proyek -->
+                <form id="add-project-form" class="space-y-6">
+                    <input type="hidden" id="edit-project-id" value="">
+                    
+                    <h3 id="form-title" class="text-lg font-bold flex items-center gap-2 text-white">
+                        <i class="fa-solid fa-folder-plus text-indigo-400"></i> Tambah Proyek Baru
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-gray-300">Judul Proyek</label>
+                            <input type="text" id="judul" required placeholder="Cth: Smart Aquarium Monitor" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-gray-300">Kategori</label>
+                            <select id="kategori" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                                <option value="web">Web Development</option>
+                                <option value="3d">3D Modeling (.glb / Preview)</option>
+                                <option value="design">Desain Grafis / Gambar</option>
+                                <option value="iot">IoT / Hardware</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300">Deskripsi Singkat</label>
+                        <textarea id="deskripsi" rows="3" required placeholder="Jelaskan secara ringkas mengenai fitur dan teknologi yang digunakan..." class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition resize-none"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-gray-300">Link Proyek / Demo (Opsional)</label>
+                            <input type="url" id="link" placeholder="https://example.com" class="w-full bg-darkbg border border-gray-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-gray-300">Upload Lampiran (Biarkan kosong jika tidak mengubah file)</label>
+                            <input type="file" id="file-input" class="w-full bg-darkbg border border-gray-800 rounded-xl px-3 py-2 text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 transition cursor-pointer">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <p id="status-msg" class="text-sm font-medium text-indigo-400 text-center md:text-left"></p>
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <button type="button" id="btn-cancel-edit" class="hidden w-full md:w-auto bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold px-5 py-3.5 rounded-xl transition text-sm">
+                                Batal Edit
+                            </button>
+                            <button type="submit" id="btn-submit" class="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white font-semibold px-8 py-3.5 rounded-xl transition duration-300 shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <span id="btn-submit-text">Simpan ke Repository</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- TABLE DAFTAR PROYEK UTAMA -->
+            <div class="bg-cardbg border border-gray-800/80 p-6 rounded-3xl shadow-2xl space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold flex items-center gap-2 text-white">
+                        <i class="fa-solid fa-list-check text-indigo-400"></i> Kelola Proyek Tersimpan
+                    </h3>
+                    <button id="btn-refresh-list" class="text-xs bg-darkbg hover:bg-gray-800 border border-gray-800 px-3 py-1.5 rounded-lg text-gray-300 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate"></i> Refresh Daftar
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-darkbg text-xs uppercase text-gray-300 border-b border-gray-800">
+                            <tr>
+                                <th class="py-3 px-4">Judul Proyek</th>
+                                <th class="py-3 px-4">Kategori</th>
+                                <th class="py-3 px-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="project-table-body" class="divide-y divide-gray-800">
+                            <tr>
+                                <td colspan="3" class="py-6 text-center text-gray-500">Klik "Refresh Daftar" untuk memuat proyek dari repository.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="py-8 px-6 border-t border-gray-800/60 text-center text-sm text-gray-500 bg-darkbg">
+        <p>&copy; 2026 Portofolio Pribadi. Ditenagai oleh Git-as-a-Database & GitHub Pages.</p>
+    </footer>
+
+    <script>
+        const PASSWORD_RAHASIA = 'admin123'; 
+
+        const loginForm = document.getElementById('login-form');
+        const loginBox = document.getElementById('login-box');
+        const adminPanel = document.getElementById('admin-panel');
+        const loginError = document.getElementById('login-error');
+
+        if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            loginBox.classList.add('hidden');
+            adminPanel.classList.remove('hidden');
         }
 
-        // 4. Update data.json di GitHub
-        const jsonString = JSON.stringify(projects, null, 2);
-        const updatedContentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const inputPass = document.getElementById('admin-pass').value;
 
-        const updateRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            message: editId ? `Edit proyek: ${judul}` : `Tambah proyek: ${judul}`,
-            content: updatedContentBase64,
-            sha: currentSha
-          })
+            if (inputPass === PASSWORD_RAHASIA) {
+                sessionStorage.setItem('isLoggedIn', 'true');
+                loginBox.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+            } else {
+                loginError.classList.remove('hidden');
+            }
         });
-
-        if (updateRes.ok) {
-          status.textContent = editId ? 'Proyek berhasil diperbarui!' : 'Proyek berhasil ditambahkan!';
-          resetFormState();
-          loadProjectsTable();
-        } else {
-          throw new Error('Gagal memperbarui data.json di GitHub');
-        }
-
-      } catch (err) {
-        console.error(err);
-        status.textContent = 'Error: ' + err.message;
-      } finally {
-        btn.disabled = false;
-      }
-    });
-  }
-});
-
-// Fungsi Memuat Tabel Proyek
-async function loadProjectsTable() {
-  const username = DEFAULT_USERNAME;
-  const token = DEFAULT_TOKEN;
-  const tbody = document.getElementById('project-table-body');
-
-  tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-indigo-400">Memuat data dari GitHub...</td></tr>`;
-
-  try {
-    const res = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json?t=${Date.now()}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    if (!res.ok) throw new Error(`Gagal mengambil data.json (Status: ${res.status})`);
-    
-    const jsonMetaData = await res.json();
-    
-    // Decode base64 UTF-8 secara aman
-    const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
-    const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
-    const decodedString = new TextDecoder().decode(bytes);
-    
-    cachedProjects = JSON.parse(decodedString);
-
-    if (!Array.isArray(cachedProjects) || cachedProjects.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-gray-500">Belum ada proyek tersimpan.</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = '';
-    cachedProjects.forEach(p => {
-      const tr = document.createElement('tr');
-      tr.className = 'border-b border-gray-800 hover:bg-darkbg/50';
-      tr.innerHTML = `
-        <td class="py-3 px-4 font-semibold text-white">${p.judul || 'Tanpa Judul'}</td>
-        <td class="py-3 px-4"><span class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-1 rounded">${(p.kategori || 'umum').toUpperCase()}</span></td>
-        <td class="py-3 px-4 text-center space-x-2">
-          <button onclick="startEditProject(${p.id})" class="text-xs bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1 rounded-lg transition border border-indigo-500/30">
-            <i class="fa-solid fa-pen-to-square"></i> Edit
-          </button>
-          <button onclick="deleteProject(${p.id})" class="text-xs bg-red-600/20 hover:bg-red-600 text-red-300 hover:text-white px-3 py-1 rounded-lg transition border border-red-500/30">
-            <i class="fa-solid fa-trash"></i> Hapus
-          </button>
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-
-  } catch (err) {
-    console.error(err);
-    tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-red-400">Gagal memuat: ${err.message}</td></tr>`;
-  }
-}
-
-// Fungsi Menyiapkan Mode Edit
-function startEditProject(id) {
-  const p = cachedProjects.find(item => item.id == id);
-  if (!p) return;
-
-  document.getElementById('edit-project-id').value = p.id;
-  document.getElementById('judul').value = p.judul;
-  document.getElementById('kategori').value = p.kategori;
-  document.getElementById('deskripsi').value = p.deskripsi;
-  document.getElementById('link').value = p.link || '';
-
-  document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-indigo-400"></i> Edit Proyek: ${p.judul}`;
-  document.getElementById('btn-submit-text').textContent = 'Perbarui Proyek';
-  document.getElementById('btn-cancel-edit').classList.remove('hidden');
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// Fungsi Hapus Proyek
-async function deleteProject(id) {
-  const p = cachedProjects.find(item => item.id == id);
-  if (!p) return;
-
-  if (!confirm(`Apakah Anda yakin ingin menghapus proyek "${p.judul}"?`)) return;
-
-  const username = DEFAULT_USERNAME;
-  const token = DEFAULT_TOKEN;
-  const status = document.getElementById('status-msg');
-
-  status.textContent = 'Menghapus proyek dari GitHub...';
-
-  try {
-    const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-
-    const jsonMetaData = await jsonRes.json();
-    
-    const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
-    const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
-    const decodedString = new TextDecoder().decode(bytes);
-    let projects = JSON.parse(decodedString);
-
-    // Filter hapus item
-    projects = projects.filter(item => item.id != id);
-
-    const jsonString = JSON.stringify(projects, null, 2);
-    const updatedContentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
-
-    const updateRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: `Hapus proyek: ${p.judul}`,
-        content: updatedContentBase64,
-        sha: jsonMetaData.sha
-      })
-    });
-
-    if (updateRes.ok) {
-      status.textContent = 'Proyek berhasil dihapus!';
-      loadProjectsTable();
-    } else {
-      throw new Error('Gagal memperbarui data.json');
-    }
-
-  } catch (err) {
-    status.textContent = 'Error: ' + err.message;
-  }
-}
-
-// Reset Form ke Mode Tambah Baru
-function resetFormState() {
-  document.getElementById('add-project-form').reset();
-  document.getElementById('edit-project-id').value = '';
-  document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-folder-plus text-indigo-400"></i> Tambah Proyek Baru`;
-  document.getElementById('btn-submit-text').textContent = 'Simpan ke Repository';
-  document.getElementById('btn-cancel-edit').classList.add('hidden');
-}
+    </script>
+    <script src="admin.js"></script>
+</body>
+</html>
