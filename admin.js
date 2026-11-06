@@ -1,5 +1,5 @@
 const REPO_NAME = 'my-portfolio';
-let cachedProjects = []; // Menyimpan data proyek yang sedang dibuka
+let cachedProjects = [];
 
 // Fungsi konversi File ke Base64
 function fileToBase64(file) {
@@ -16,19 +16,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnRefresh = document.getElementById('btn-refresh-list');
   const btnCancelEdit = document.getElementById('btn-cancel-edit');
 
-  // Load daftar proyek saat tombol Refresh diklik
   if (btnRefresh) {
     btnRefresh.addEventListener('click', loadProjectsTable);
   }
 
-  // Batalkan Mode Edit
   if (btnCancelEdit) {
     btnCancelEdit.addEventListener('click', () => {
       resetFormState();
     });
   }
 
-  // Submit Form (Bisa Tambah Baru atau Update Edit)
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -40,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const editId = document.getElementById('edit-project-id').value;
 
       if (!username || !token) {
-        alert('Masukkan Username dan Token GitHub terlebih dahulu!');
+        alert('Kredensial GitHub tidak ditemukan. Silakan login ulang.');
         return;
       }
 
@@ -54,7 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = document.getElementById('link').value;
         const fileInput = document.getElementById('file-input').files[0];
 
-        // 1. Ambil data.json terkini dari repo
         const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
           headers: { 'Authorization': `token ${token}` }
         });
@@ -63,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const jsonMetaData = await jsonRes.json();
         const currentSha = jsonMetaData.sha;
 
-        // Decode base64 UTF-8 secara aman
         const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
         const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
         const decodedString = new TextDecoder().decode(bytes);
@@ -71,12 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let filePath = '';
         if (editId) {
-          // Jika mode edit, pertahankan file lama jika tidak memilih file baru
           const existing = projects.find(p => p.id == editId);
           if (existing) filePath = existing.file_path || '';
         }
 
-        // 2. Upload file jika ada file baru yang dipilih
         if (fileInput) {
           status.textContent = 'Mengunggah lampiran file...';
           const base64File = await fileToBase64(fileInput);
@@ -97,9 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
-        // 3. Tambah Baru vs Update Data
         if (editId) {
-          // Mode EDIT
           projects = projects.map(p => {
             if (p.id == editId) {
               return { ...p, judul, kategori, deskripsi, link, file_path: filePath };
@@ -108,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           status.textContent = 'Memperbarui data proyek...';
         } else {
-          // Mode TAMBAH BARU
           const newProj = {
             id: Date.now(),
             judul,
@@ -121,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
           status.textContent = 'Menambahkan proyek baru...';
         }
 
-        // 4. Update data.json di GitHub
         const jsonString = JSON.stringify(projects, null, 2);
         const updatedContentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
 
@@ -156,14 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Fungsi Memuat Tabel Proyek
 async function loadProjectsTable() {
   const username = document.getElementById('gh-username').value.trim();
   const token = document.getElementById('gh-token').value.trim();
   const tbody = document.getElementById('project-table-body');
 
   if (!username || !token) {
-    alert('Masukkan Username dan Token GitHub terlebih dahulu!');
+    alert('Kredensial GitHub tidak ditemukan!');
     return;
   }
 
@@ -177,8 +165,6 @@ async function loadProjectsTable() {
     if (!res.ok) throw new Error(`Gagal mengambil data.json (Status: ${res.status})`);
     
     const jsonMetaData = await res.json();
-    
-    // Decode base64 UTF-8 secara aman
     const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
     const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
     const decodedString = new TextDecoder().decode(bytes);
@@ -215,7 +201,6 @@ async function loadProjectsTable() {
   }
 }
 
-// Fungsi Menyiapkan Mode Edit
 function startEditProject(id) {
   const p = cachedProjects.find(item => item.id == id);
   if (!p) return;
@@ -233,7 +218,6 @@ function startEditProject(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Fungsi Hapus Proyek
 async function deleteProject(id) {
   const p = cachedProjects.find(item => item.id == id);
   if (!p) return;
@@ -252,13 +236,11 @@ async function deleteProject(id) {
     });
 
     const jsonMetaData = await jsonRes.json();
-    
     const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
     const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
     const decodedString = new TextDecoder().decode(bytes);
     let projects = JSON.parse(decodedString);
 
-    // Filter hapus item
     projects = projects.filter(item => item.id != id);
 
     const jsonString = JSON.stringify(projects, null, 2);
@@ -289,7 +271,6 @@ async function deleteProject(id) {
   }
 }
 
-// Reset Form ke Mode Tambah Baru
 function resetFormState() {
   document.getElementById('add-project-form').reset();
   document.getElementById('edit-project-id').value = '';
