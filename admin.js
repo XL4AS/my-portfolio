@@ -1,6 +1,7 @@
 const REPO_NAME = 'my-portfolio';
 let cachedProjects = []; // Menyimpan data proyek yang sedang dibuka
 
+// Fungsi konversi File ke Base64
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -16,133 +17,143 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnCancelEdit = document.getElementById('btn-cancel-edit');
 
   // Load daftar proyek saat tombol Refresh diklik
-  btnRefresh.addEventListener('click', loadProjectsTable);
+  if (btnRefresh) {
+    btnRefresh.addEventListener('click', loadProjectsTable);
+  }
 
   // Batalkan Mode Edit
-  btnCancelEdit.addEventListener('click', () => {
-    resetFormState();
-  });
+  if (btnCancelEdit) {
+    btnCancelEdit.addEventListener('click', () => {
+      resetFormState();
+    });
+  }
 
   // Submit Form (Bisa Tambah Baru atau Update Edit)
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const username = document.getElementById('gh-username').value.trim();
-    const token = document.getElementById('gh-token').value.trim();
-    const status = document.getElementById('status-msg');
-    const btn = document.getElementById('btn-submit');
-    const editId = document.getElementById('edit-project-id').value;
+      const username = document.getElementById('gh-username').value.trim();
+      const token = document.getElementById('gh-token').value.trim();
+      const status = document.getElementById('status-msg');
+      const btn = document.getElementById('btn-submit');
+      const editId = document.getElementById('edit-project-id').value;
 
-    if (!username || !token) {
-      alert('Masukkan Username dan Token GitHub terlebih dahulu!');
-      return;
-    }
-
-    btn.disabled = true;
-    status.textContent = 'Memproses ke GitHub...';
-
-    try {
-      const judul = document.getElementById('judul').value;
-      const kategori = document.getElementById('kategori').value;
-      const deskripsi = document.getElementById('deskripsi').value;
-      const link = document.getElementById('link').value;
-      const fileInput = document.getElementById('file-input').files[0];
-
-      // 1. Ambil data.json terkini dari repo
-      const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-        headers: { 'Authorization': `token ${token}` }
-      });
-
-      if (!jsonRes.ok) throw new Error('Gagal mengambil data.json dari GitHub.');
-      const jsonMetaData = await jsonRes.json();
-      const currentSha = jsonMetaData.sha;
-      const decodedString = decodeURIComponent(escape(atob(jsonMetaData.content)));
-      let projects = JSON.parse(decodedString);
-
-      let filePath = '';
-      if (editId) {
-        // Jika mode edit, pertahankan file lama jika tidak memilih file baru
-        const existing = projects.find(p => p.id == editId);
-        if (existing) filePath = existing.file_path || '';
+      if (!username || !token) {
+        alert('Masukkan Username dan Token GitHub terlebih dahulu!');
+        return;
       }
 
-      // 2. Upload file jika ada file baru yang dipilih
-      if (fileInput) {
-        status.textContent = 'Mengunggah lampiran file...';
-        const base64File = await fileToBase64(fileInput);
-        const cleanFileName = fileInput.name.replace(/\s+/g, '_');
-        const fileName = `${Date.now()}_${cleanFileName}`;
-        filePath = `uploads/${fileName}`;
+      btn.disabled = true;
+      status.textContent = 'Memproses ke GitHub...';
 
-        await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/${filePath}`, {
+      try {
+        const judul = document.getElementById('judul').value;
+        const kategori = document.getElementById('kategori').value;
+        const deskripsi = document.getElementById('deskripsi').value;
+        const link = document.getElementById('link').value;
+        const fileInput = document.getElementById('file-input').files[0];
+
+        // 1. Ambil data.json terkini dari repo
+        const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
+          headers: { 'Authorization': `token ${token}` }
+        });
+
+        if (!jsonRes.ok) throw new Error('Gagal mengambil data.json dari GitHub.');
+        const jsonMetaData = await jsonRes.json();
+        const currentSha = jsonMetaData.sha;
+
+        // Decode base64 UTF-8 secara aman
+        const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
+        const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
+        const decodedString = new TextDecoder().decode(bytes);
+        let projects = JSON.parse(decodedString);
+
+        let filePath = '';
+        if (editId) {
+          // Jika mode edit, pertahankan file lama jika tidak memilih file baru
+          const existing = projects.find(p => p.id == editId);
+          if (existing) filePath = existing.file_path || '';
+        }
+
+        // 2. Upload file jika ada file baru yang dipilih
+        if (fileInput) {
+          status.textContent = 'Mengunggah lampiran file...';
+          const base64File = await fileToBase64(fileInput);
+          const cleanFileName = fileInput.name.replace(/\s+/g, '_');
+          const fileName = `${Date.now()}_${cleanFileName}`;
+          filePath = `uploads/${fileName}`;
+
+          await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/${filePath}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: `Upload ${fileName}`,
+              content: base64File
+            })
+          });
+        }
+
+        // 3. Tambah Baru vs Update Data
+        if (editId) {
+          // Mode EDIT
+          projects = projects.map(p => {
+            if (p.id == editId) {
+              return { ...p, judul, kategori, deskripsi, link, file_path: filePath };
+            }
+            return p;
+          });
+          status.textContent = 'Memperbarui data proyek...';
+        } else {
+          // Mode TAMBAH BARU
+          const newProj = {
+            id: Date.now(),
+            judul,
+            kategori,
+            deskripsi,
+            link,
+            file_path: filePath
+          };
+          projects.push(newProj);
+          status.textContent = 'Menambahkan proyek baru...';
+        }
+
+        // 4. Update data.json di GitHub
+        const jsonString = JSON.stringify(projects, null, 2);
+        const updatedContentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
+
+        const updateRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
           method: 'PUT',
           headers: {
             'Authorization': `token ${token}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            message: `Upload ${fileName}`,
-            content: base64File
+            message: editId ? `Edit proyek: ${judul}` : `Tambah proyek: ${judul}`,
+            content: updatedContentBase64,
+            sha: currentSha
           })
         });
+
+        if (updateRes.ok) {
+          status.textContent = editId ? 'Proyek berhasil diperbarui!' : 'Proyek berhasil ditambahkan!';
+          resetFormState();
+          loadProjectsTable();
+        } else {
+          throw new Error('Gagal memperbarui data.json di GitHub');
+        }
+
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Error: ' + err.message;
+      } finally {
+        btn.disabled = false;
       }
-
-      // 3. Tambah Baru vs Update Data
-      if (editId) {
-        // Mode EDIT
-        projects = projects.map(p => {
-          if (p.id == editId) {
-            return { ...p, judul, kategori, deskripsi, link, file_path: filePath };
-          }
-          return p;
-        });
-        status.textContent = 'Memperbarui data proyek...';
-      } else {
-        // Mode TAMBAH BARU
-        const newProj = {
-          id: Date.now(),
-          judul,
-          kategori,
-          deskripsi,
-          link,
-          file_path: filePath
-        };
-        projects.push(newProj);
-        status.textContent = 'Menambahkan proyek baru...';
-      }
-
-      // 4. Update data.json di GitHub
-      const jsonString = JSON.stringify(projects, null, 2);
-      const updatedContentBase64 = btoa(unescape(encodeURIComponent(jsonString)));
-
-      const updateRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `token ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: editId ? `Edit proyek: ${judul}` : `Tambah proyek: ${judul}`,
-          content: updatedContentBase64,
-          sha: currentSha
-        })
-      });
-
-      if (updateRes.ok) {
-        status.textContent = editId ? 'Proyek berhasil diperbarui!' : 'Proyek berhasil ditambahkan!';
-        resetFormState();
-        loadProjectsTable();
-      } else {
-        throw new Error('Gagal memperbarui data.json di GitHub');
-      }
-
-    } catch (err) {
-      console.error(err);
-      status.textContent = 'Error: ' + err.message;
-    } finally {
-      btn.disabled = false;
-    }
-  });
+    });
+  }
 });
 
 // Fungsi Memuat Tabel Proyek
@@ -152,7 +163,7 @@ async function loadProjectsTable() {
   const tbody = document.getElementById('project-table-body');
 
   if (!username || !token) {
-    alert('Masukkan Username dan Token GitHub!');
+    alert('Masukkan Username dan Token GitHub terlebih dahulu!');
     return;
   }
 
@@ -163,12 +174,18 @@ async function loadProjectsTable() {
       headers: { 'Authorization': `token ${token}` }
     });
 
-    if (!res.ok) throw new Error('Gagal mengambil data.json');
+    if (!res.ok) throw new Error(`Gagal mengambil data.json (Status: ${res.status})`);
+    
     const jsonMetaData = await res.json();
-    const decodedString = decodeURIComponent(escape(atob(jsonMetaData.content)));
+    
+    // Decode base64 UTF-8 secara aman
+    const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
+    const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
+    const decodedString = new TextDecoder().decode(bytes);
+    
     cachedProjects = JSON.parse(decodedString);
 
-    if (cachedProjects.length === 0) {
+    if (!Array.isArray(cachedProjects) || cachedProjects.length === 0) {
       tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-gray-500">Belum ada proyek tersimpan.</td></tr>`;
       return;
     }
@@ -178,8 +195,8 @@ async function loadProjectsTable() {
       const tr = document.createElement('tr');
       tr.className = 'border-b border-gray-800 hover:bg-darkbg/50';
       tr.innerHTML = `
-        <td class="py-3 px-4 font-semibold text-white">${p.judul}</td>
-        <td class="py-3 px-4"><span class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-1 rounded">${p.kategori.toUpperCase()}</span></td>
+        <td class="py-3 px-4 font-semibold text-white">${p.judul || 'Tanpa Judul'}</td>
+        <td class="py-3 px-4"><span class="text-xs bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-1 rounded">${(p.kategori || 'umum').toUpperCase()}</span></td>
         <td class="py-3 px-4 text-center space-x-2">
           <button onclick="startEditProject(${p.id})" class="text-xs bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white px-3 py-1 rounded-lg transition border border-indigo-500/30">
             <i class="fa-solid fa-pen-to-square"></i> Edit
@@ -193,6 +210,7 @@ async function loadProjectsTable() {
     });
 
   } catch (err) {
+    console.error(err);
     tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-red-400">Gagal memuat: ${err.message}</td></tr>`;
   }
 }
@@ -234,7 +252,11 @@ async function deleteProject(id) {
     });
 
     const jsonMetaData = await jsonRes.json();
-    let projects = JSON.parse(decodeURIComponent(escape(atob(jsonMetaData.content))));
+    
+    const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
+    const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
+    const decodedString = new TextDecoder().decode(bytes);
+    let projects = JSON.parse(decodedString);
 
     // Filter hapus item
     projects = projects.filter(item => item.id != id);
