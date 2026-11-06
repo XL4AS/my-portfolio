@@ -19,12 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnRefresh = document.getElementById('btn-refresh-list');
   const btnCancelEdit = document.getElementById('btn-cancel-edit');
 
-  // Otomatis isi input jika elemennya ada di HTML
-  const inputUsername = document.getElementById('gh-username');
-  const inputToken = document.getElementById('gh-token');
-  if (inputUsername) inputUsername.value = DEFAULT_USERNAME;
-  if (inputToken) inputToken.value = DEFAULT_TOKEN;
-
   // Load daftar proyek saat tombol Refresh diklik
   if (btnRefresh) {
     btnRefresh.addEventListener('click', loadProjectsTable);
@@ -60,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 1. Ambil data.json terkini dari repo
         const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-          headers: { 'Authorization': `token ${token}` }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
 
         if (!jsonRes.ok) throw new Error('Gagal mengambil data.json dari GitHub.');
@@ -75,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let filePath = '';
         if (editId) {
+          // Jika mode edit, pertahankan file lama jika tidak memilih file baru
           const existing = projects.find(p => p.id == editId);
           if (existing) filePath = existing.file_path || '';
         }
@@ -90,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
           await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/${filePath}`, {
             method: 'PUT',
             headers: {
-              'Authorization': `token ${token}`,
+              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -102,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Tambah Baru vs Update Data
         if (editId) {
+          // Mode EDIT
           projects = projects.map(p => {
             if (p.id == editId) {
               return { ...p, judul, kategori, deskripsi, link, file_path: filePath };
@@ -110,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           status.textContent = 'Memperbarui data proyek...';
         } else {
+          // Mode TAMBAH BARU
           const newProj = {
             id: Date.now(),
             judul,
@@ -129,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const updateRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
           method: 'PUT',
           headers: {
-            'Authorization': `token ${token}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -167,13 +164,14 @@ async function loadProjectsTable() {
 
   try {
     const res = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json?t=${Date.now()}`, {
-      headers: { 'Authorization': `token ${token}` }
+      headers: { 'Authorization': `Bearer ${token}` }
     });
 
     if (!res.ok) throw new Error(`Gagal mengambil data.json (Status: ${res.status})`);
     
     const jsonMetaData = await res.json();
     
+    // Decode base64 UTF-8 secara aman
     const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
     const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
     const decodedString = new TextDecoder().decode(bytes);
@@ -243,7 +241,7 @@ async function deleteProject(id) {
 
   try {
     const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-      headers: { 'Authorization': `token ${token}` }
+      headers: { 'Authorization': `Bearer ${token}` }
     });
 
     const jsonMetaData = await jsonRes.json();
@@ -253,6 +251,7 @@ async function deleteProject(id) {
     const decodedString = new TextDecoder().decode(bytes);
     let projects = JSON.parse(decodedString);
 
+    // Filter hapus item
     projects = projects.filter(item => item.id != id);
 
     const jsonString = JSON.stringify(projects, null, 2);
@@ -261,7 +260,7 @@ async function deleteProject(id) {
     const updateRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
       method: 'PUT',
       headers: {
-        'Authorization': `token ${token}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
