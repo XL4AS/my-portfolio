@@ -1,6 +1,4 @@
 const REPO_NAME = 'my-portfolio';
-const DEFAULT_USERNAME = 'XL4AS';
-const DEFAULT_TOKEN = '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';
 let cachedProjects = []; // Menyimpan data proyek yang sedang dibuka
 
 // Fungsi konversi File ke Base64
@@ -17,9 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('add-project-form');
   const btnRefresh = document.getElementById('btn-refresh-list');
   const btnCancelEdit = document.getElementById('btn-cancel-edit');
-
-  // Muat otomatis tabel proyek saat halaman pertama kali dibuka
-  loadProjectsTable();
 
   // Load daftar proyek saat tombol Refresh diklik
   if (btnRefresh) {
@@ -38,11 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const username = DEFAULT_USERNAME;
-      const token = DEFAULT_TOKEN;
+      const username = document.getElementById('gh-username').value.trim();
+      const token = document.getElementById('gh-token').value.trim();
       const status = document.getElementById('status-msg');
       const btn = document.getElementById('btn-submit');
       const editId = document.getElementById('edit-project-id').value;
+
+      if (!username || !token) {
+        alert('Masukkan Username dan Token GitHub terlebih dahulu!');
+        return;
+      }
 
       btn.disabled = true;
       status.textContent = 'Memproses ke GitHub...';
@@ -158,10 +158,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fungsi Memuat Tabel Proyek
 async function loadProjectsTable() {
-  const username = DEFAULT_USERNAME;
-  const token = DEFAULT_TOKEN;
+  const username = document.getElementById('gh-username').value.trim();
+  const token = document.getElementById('gh-token').value.trim();
   const tbody = document.getElementById('project-table-body');
-  if (!tbody) return;
+
+  if (!username || !token) {
+    alert('Masukkan Username dan Token GitHub terlebih dahulu!');
+    return;
+  }
 
   tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-indigo-400">Memuat data dari GitHub...</td></tr>`;
 
@@ -236,8 +240,8 @@ async function deleteProject(id) {
 
   if (!confirm(`Apakah Anda yakin ingin menghapus proyek "${p.judul}"?`)) return;
 
-  const username = DEFAULT_USERNAME;
-  const token = DEFAULT_TOKEN;
+  const username = document.getElementById('gh-username').value.trim();
+  const token = document.getElementById('gh-token').value.trim();
   const status = document.getElementById('status-msg');
 
   status.textContent = 'Menghapus proyek dari GitHub...';
