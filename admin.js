@@ -1,6 +1,6 @@
 const REPO_NAME = 'my-portfolio';
 const DEFAULT_USERNAME = 'XL4AS';
-const DEFAULT_TOKEN = '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';
+const DEFAULT_TOKEN = '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';
 let cachedProjects = []; // Menyimpan data proyek yang sedang dibuka
 
 // Fungsi konversi File ke Base64
