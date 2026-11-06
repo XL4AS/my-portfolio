@@ -33,14 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const username = document.getElementById('gh-username')?.value.trim() || 'XL4S';
-      const token = document.getElementById('gh-token')?.value.trim() || '';
+      const username = document.getElementById('gh-username').value.trim();
+      const token = document.getElementById('gh-token').value.trim();
       const status = document.getElementById('status-msg');
       const btn = document.getElementById('btn-submit');
       const editId = document.getElementById('edit-project-id').value;
 
       if (!username || !token) {
-        alert('Konfigurasi username atau token GitHub tidak ditemukan!');
+        alert('Masukkan Username dan Token GitHub terlebih dahulu!');
         return;
       }
 
@@ -54,12 +54,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = document.getElementById('link').value;
         const fileInput = document.getElementById('file-input').files[0];
 
-        // 1. Ambil data.json terkini dari repo menggunakan Bearer Token
+        // 1. Ambil data.json terkini dari repo
         const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: { 'Authorization': `token ${token}` }
         });
 
-        if (!jsonRes.ok) throw new Error(`Gagal mengambil data.json (Status: ${jsonRes.status})`);
+        if (!jsonRes.ok) throw new Error('Gagal mengambil data.json dari GitHub.');
         const jsonMetaData = await jsonRes.json();
         const currentSha = jsonMetaData.sha;
 
@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let filePath = '';
         if (editId) {
+          // Jika mode edit, pertahankan file lama jika tidak memilih file baru
           const existing = projects.find(p => p.id == editId);
           if (existing) filePath = existing.file_path || '';
         }
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
           await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/${filePath}`, {
             method: 'PUT',
             headers: {
-              'Authorization': `Bearer ${token}`,
+              'Authorization': `token ${token}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -98,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 3. Tambah Baru vs Update Data
         if (editId) {
+          // Mode EDIT
           projects = projects.map(p => {
             if (p.id == editId) {
               return { ...p, judul, kategori, deskripsi, link, file_path: filePath };
@@ -106,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
           status.textContent = 'Memperbarui data proyek...';
         } else {
+          // Mode TAMBAH BARU
           const newProj = {
             id: Date.now(),
             judul,
@@ -125,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const updateRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
           method: 'PUT',
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `token ${token}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
@@ -155,12 +158,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Fungsi Memuat Tabel Proyek
 async function loadProjectsTable() {
-  const username = document.getElementById('gh-username')?.value.trim() || 'XL4S';
-  const token = document.getElementById('gh-token')?.value.trim() || '';
+  const username = document.getElementById('gh-username').value.trim();
+  const token = document.getElementById('gh-token').value.trim();
   const tbody = document.getElementById('project-table-body');
 
-  if (!token) {
-    tbody.innerHTML = `<tr><td colspan="3" class="py-6 text-center text-red-400">Token GitHub tidak ditemukan di HTML!</td></tr>`;
+  if (!username || !token) {
+    alert('Masukkan Username dan Token GitHub terlebih dahulu!');
     return;
   }
 
@@ -168,13 +171,14 @@ async function loadProjectsTable() {
 
   try {
     const res = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json?t=${Date.now()}`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': `token ${token}` }
     });
 
     if (!res.ok) throw new Error(`Gagal mengambil data.json (Status: ${res.status})`);
     
     const jsonMetaData = await res.json();
     
+    // Decode base64 UTF-8 secara aman
     const binaryString = atob(jsonMetaData.content.replace(/\s/g, ''));
     const bytes = Uint8Array.from(binaryString, (m) => m.codePointAt(0));
     const decodedString = new TextDecoder().decode(bytes);
@@ -236,15 +240,15 @@ async function deleteProject(id) {
 
   if (!confirm(`Apakah Anda yakin ingin menghapus proyek "${p.judul}"?`)) return;
 
-  const username = document.getElementById('gh-username')?.value.trim() || 'XL4S';
-  const token = document.getElementById('gh-token')?.value.trim() || '';
+  const username = document.getElementById('gh-username').value.trim();
+  const token = document.getElementById('gh-token').value.trim();
   const status = document.getElementById('status-msg');
 
   status.textContent = 'Menghapus proyek dari GitHub...';
 
   try {
     const jsonRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
-      headers: { 'Authorization': `Bearer ${token}` }
+      headers: { 'Authorization': `token ${token}` }
     });
 
     const jsonMetaData = await jsonRes.json();
@@ -254,6 +258,7 @@ async function deleteProject(id) {
     const decodedString = new TextDecoder().decode(bytes);
     let projects = JSON.parse(decodedString);
 
+    // Filter hapus item
     projects = projects.filter(item => item.id != id);
 
     const jsonString = JSON.stringify(projects, null, 2);
@@ -262,7 +267,7 @@ async function deleteProject(id) {
     const updateRes = await fetch(`https://api.github.com/repos/${username}/${REPO_NAME}/contents/data.json`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `token ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
