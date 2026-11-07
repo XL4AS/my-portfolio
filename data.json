@@ -22,5 +22,13 @@
     "deskripsi": "Proyek Smart Home berbasis IoT yang dirancang untuk menciptakan lingkungan ruangan yang lebih cerdas, nyaman, dan efisien. Sistem ini menggunakan sensor pendeteksi orang yang masuk dan keluar ruangan sebagai dasar otomatisasi pengaturan suhu AC dan intensitas pencahayaan lampu sesuai kondisi serta jumlah orang di dalam ruangan.\nDilengkapi dengan monitoring dan kontrol secara real-time melalui aplikasi Blynk, pengguna dapat memantau kondisi ruangan sekaligus mengendalikan perangkat elektronik dari jarak jauh.",
     "link": "https://drive.google.com/drive/folders/1mDeVIajn7ZRQG8DMsArbAPSKzS2ndd3c?usp=sharing",
     "file_path": "uploads/1793944055126_Smart_Home__IoT_Automation_Infographic.png"
+  },
+  {
+    "id": 1794031651221,
+    "judul": "SISTEM INFORMASI PENGELOLAAN ANGGARAN BERBASIS WEB",
+    "kategori": "web",
+    "deskripsi": "Mengembangkan sistem informasi berbasis web untuk mempermudah pengelolaan dan pemantauan anggaran secara\nterstruktur, akurat, dan efisien. Proyek ini dikerjakan selama kegiatan magang dengan bimbingan Dinas Kominfo.\nFitur utama: Pengelolaan data anggaran dan pengguna, Pencatatan realisasi belanja, Perhitungan sisa anggaran otomatis,\nLaporan pengelolaan anggaran.\nKompetensi yang ditunjukkan: penyusunan struktur halaman, pengembangan tampilan website, pengaturan konten.",
+    "link": "https://drive.google.com/drive/folders/1b0eCj3QeVIpzqi7x-wKQFCIH-csyE1bT?usp=drive_link",
+    "file_path": "uploads/1794031646169_Government_Budget_Management_Dashboard.png"
   }
 ]
