@@ -1,21 +1,5 @@
 [
   {
-    "id": 1793924968852,
-    "judul": "di cek",
-    "kategori": "web",
-    "deskripsi": "coba",
-    "link": "",
-    "file_path": "uploads/1793924966089_Untitled_Diagram.drawio(6).png"
-  },
-  {
-    "id": 1793936784537,
-    "judul": "smart",
-    "kategori": "web",
-    "deskripsi": "yooo",
-    "link": "",
-    "file_path": ""
-  },
-  {
     "id": 1793944061745,
     "judul": "Smart Home Automation & Real-Time Monitoring",
     "kategori": "iot",
